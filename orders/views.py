@@ -1,17 +1,12 @@
-from django.shortcuts import render , get_object_or_404 , redirect
-from django.contrib.auth.decorators import login_required
-from .models import Order
+from django.views import View
+from django.shortcuts import get_object_or_404, redirect
+from django.contrib.auth.mixins import LoginRequiredMixin
+from .models import Order, OrderItem
+from products.models import Product
 
-@login_required
-def order_list(request):
-    orders = Order.objects.all()
-    category_id = request.GET.get("category")
-    created_order = request.GET.get('time')
-    start_date = request.GET.get('time')
-
-    if category_id:
-       orders = orders.filter(items__product__category__id=category_id)
-    if created_order:
-        orders = orders.filter(time__range=[start_date])
-
-    return render(request,'order/order_list.html',{'orders':orders})
+class CreateOrderView(LoginRequiredMixin, View):
+    def post(self, request, product_id):
+        product = get_object_or_404(Product, id=product_id)
+        order = Order.objects.create(user=request.user)
+        OrderItem.objects.create(order=order, product=product, quantity=1)
+        return redirect('order_success')

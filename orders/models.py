@@ -5,7 +5,6 @@ from accounts.models import CustomUser
 
 class Order(models.Model):
     user = models.ForeignKey(CustomUser,on_delete=models.CASCADE,related_name='order_user')
-    product = models.ForeignKey(Product,on_delete=models.CASCADE,related_name='order_product')
     time = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
