@@ -22,14 +22,14 @@ def profile(request):
 
 class MyPasswordResetView(PasswordResetView):
     template_name = 'accounts/password_reset_form.html'
-    success_url = reverse_lazy('accounts/password_reset_done')
+    success_url = reverse_lazy('password_reset_done')
 
 class MyPasswordResetDoneView(PasswordResetDoneView):
     template_name = 'accounts/password_reset_done.html'
 
 class MyPasswordResetConfirmView(PasswordResetConfirmView):
     template_name = 'accounts/password_reset_confirm.html'
-    success_url = reverse_lazy('accounts/password_reset_complete')
+    success_url = reverse_lazy('password_reset_complete')
 
 class MyPasswordResetCompleteView(PasswordResetCompleteView):
     template_name = 'accounts/password_reset_complete.html'
