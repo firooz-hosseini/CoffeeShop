@@ -1,6 +1,7 @@
 from django.shortcuts import render , get_object_or_404 , redirect
 from django.contrib.auth.decorators import login_required
 from .models import Product,Favorite
+from django.views.generic import ListView, DetailView
 
 
 @login_required
@@ -15,4 +16,14 @@ def user_favorites(request):
     return render(request,'products/user_favorites.html',{'favorite':favorite})
 
 
+class ProductListView(ListView):
+    model = Product
+    template_name = 'products/product_list.html'
+    context_object_name = 'products'
+    queryset = Product.objects.prefetch_related('ingredient', 'image_product', 'category')
 
+
+class ProductDetailView(DetailView):
+    model = Product
+    template_name = 'products/product_detail.html'
+    context_object_name = 'product'
