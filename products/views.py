@@ -20,7 +20,6 @@ class ProductListView(ListView):
     model = Product
     template_name = 'products/product_list.html'
     context_object_name = 'products'
-    queryset = Product.objects.prefetch_related('ingredient', 'image_product', 'category')
 
 
 class ProductDetailView(DetailView):
