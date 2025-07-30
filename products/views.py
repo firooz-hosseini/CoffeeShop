@@ -4,10 +4,10 @@ from .models import Product,Favorite
 
 
 @login_required
-def ad_to_favorites(request,prdoct_id):
-    product = get_object_or_404(Product,id = prdoct_id)
+def add_to_favorites(request,product_id):
+    product = get_object_or_404(Product,id = product_id)
     Favorite.objects.create(user = request.user,product = product)
-    return redirect('product_detail',prdoct_id=product.id)
+    return redirect('product_detail',product_id=product.id)
 
 @login_required
 def user_favorites(request):
