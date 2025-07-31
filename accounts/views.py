@@ -1,10 +1,15 @@
 from django.shortcuts import render
-
 from .forms import CustomUserCreationForm
 from django.urls import reverse_lazy
 from django.views.generic.edit import CreateView
-from django.contrib.auth.views import LoginView, PasswordResetView, PasswordResetDoneView, PasswordResetConfirmView, PasswordResetCompleteView
+from django.views.generic import TemplateView, UpdateView
+from django.contrib.auth.views import LoginView, PasswordChangeView, PasswordResetView, PasswordResetDoneView, PasswordResetConfirmView, PasswordResetCompleteView
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
+from orders.models import Order, Comment, Rating, OrderItem
+from products.models import Favorite
+from .models import CustomUser
+from .forms import ProfileUpdateForm
 
 
 class SignUpView(CreateView):
@@ -16,20 +21,48 @@ class SignUpView(CreateView):
 class MyLoginView(LoginView):
     template_name = 'accounts/login.html'
 
-@login_required
-def profile(request):
-    return render(request, 'accounts/profile.html')
+
+class ProfileView(LoginRequiredMixin, TemplateView):
+    template_name = 'accounts/profile.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        user = self.request.user
+
+        context['user'] = user
+        context['orders'] = Order.objects.filter(user=user)
+        context['items'] = OrderItem.objects.all()
+        context['favorites'] = Favorite.objects.filter(user=user)
+        context['comments'] = Comment.objects.filter(user=user)
+        context['ratings'] = Rating.objects.filter(user=user)
+
+        return context
+    
+
+class ProfileUpdateView(LoginRequiredMixin, UpdateView):
+    model = CustomUser
+    form_class = ProfileUpdateForm
+    template_name = 'accounts/profile_update.html'
+    success_url = reverse_lazy('profile')
+
+    def get_object(self):
+        return self.request.user
+    
+class CustomPasswordChangeView(LoginRequiredMixin, PasswordChangeView):
+    template_name = 'accounts/change_password.html'
+    success_url = reverse_lazy('profile')
+
 
 class MyPasswordResetView(PasswordResetView):
     template_name = 'accounts/password_reset_form.html'
-    success_url = reverse_lazy('accounts/password_reset_done')
+    success_url = reverse_lazy('password_reset_done')
 
 class MyPasswordResetDoneView(PasswordResetDoneView):
     template_name = 'accounts/password_reset_done.html'
 
 class MyPasswordResetConfirmView(PasswordResetConfirmView):
     template_name = 'accounts/password_reset_confirm.html'
-    success_url = reverse_lazy('accounts/password_reset_complete')
+    success_url = reverse_lazy('password_reset_complete')
 
 class MyPasswordResetCompleteView(PasswordResetCompleteView):
     template_name = 'accounts/password_reset_complete.html'
