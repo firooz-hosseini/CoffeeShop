@@ -12,5 +12,5 @@ class CustomUserCreationForm(UserCreationForm):
 class ProfileUpdateForm(forms.ModelForm):
     class Meta:
         model = CustomUser
-        fields = ['first_name', 'last_name', 'profile_picture']
+        fields = ['mobile', 'first_name', 'last_name', 'profile_picture']
         
