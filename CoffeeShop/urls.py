@@ -20,8 +20,8 @@ from .views import HomePageView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('accounts/', include('accounts.urls')),
-    path('orders/', include('orders.urls')),
-    path('products/', include('products.urls')),
+    path('', include('accounts.urls')),
+    path('', include('orders.urls')),
+    path('', include('products.urls')),
     path('', HomePageView.as_view(), name='home'),
 ]
