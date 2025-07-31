@@ -6,10 +6,54 @@
     <title>Document</title>
 </head>
 <body>
-    <h1>welcome to your profile</h1>
-        <form action="{% url 'logout' %}" method="post">
+    <h1>Profile: {{ user.first_name }}</h1>
+<p>Mobile: {{ user.mobile }}</p>
+
+{% if user.profile_picture %}
+    <img src="{{ user.profile_picture.url }}" width="150">
+{% endif %}
+
+<h2>Orders</h2>
+<ul>
+    {% for item in items %}
+        <li>{{ item.quantity }} {{ item.product.title }}</li>
+    {% empty %}
+        <li>No order is found</li>
+    {% endfor %}
+</ul>
+
+<h2>Favorites</h2>
+<ul>
+    {% for fav in favorites %}
+        <li>{{ fav.product.title }}</li>
+    {% empty %}
+        <li>No favorite product</li>
+    {% endfor %}
+</ul>
+
+<h2>Scores</h2>
+<ul>
+    {% for rating in ratings %}
+        <li>{{ rating.product.title }} - Score: {{ rating.score }}</li>
+    {% empty %}
+        <li> No rating is found </li>
+    {% endfor %}
+</ul>
+
+<h2>Comments</h2>
+<ul>
+    {% for comment in comments %}
+        <li>{{ comment.product.title }} - "{{ comment.text }}"</li>
+    {% empty %}
+        <li>No comment is found</li>
+    {% endfor %}
+</ul>
+    <button><a href="{% url 'edit-profile' %}">Edit Profile</a></button>
+    <button><a href="{% url 'change-password' %}">Change Password</a></button>
+    <form action="{% url 'logout' %}" method="post">
         {% csrf_token %}
         <button type="submit">Logout</button>
     </form>
+    <button><a href="{% url 'home' %}">Back to home</a></button>
 </body>
 </html>
