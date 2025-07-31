@@ -49,5 +49,10 @@
     {% endfor %}
 </ul>
     <button><a href="{% url 'edit-profile' %}">Edit Profile</a></button>
+    <button><a href="{% url 'change-password' %}">Change Password</a></button>
+    <form action="{% url 'logout' %}" method="post">
+        {% csrf_token %}
+        <button type="submit">Logout</button>
+    </form>
 </body>
 </html>
