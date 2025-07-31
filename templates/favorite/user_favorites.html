@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Document</title>
+</head>
+<body>
+    <h1>Your Favorite Products</h1>
+    <ul>
+        {% for favorite in favorite %}
+        <li>
+            {{ favorite.product.title }}
+            <form method="post" action="{% url 'create_order' favorite.product.pk %}">
+                {% csrf_token %}
+                <button type="submit">add to order</button>
+            </form>
+        </li>
+        {% empty %}
+            <p>You have no favorite.</p>
+        {% endfor %}
+    </ul>
+    <a href="{% url 'profile' %}"><button>Return to profile</button></a>
+</body>
+</html>

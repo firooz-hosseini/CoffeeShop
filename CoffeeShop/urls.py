@@ -24,4 +24,5 @@ urlpatterns = [
     path('orders/', include('orders.urls')),
     path('products/', include('products.urls')),
     path('', HomePageView.as_view(), name='home'),
+
 ]
