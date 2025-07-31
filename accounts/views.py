@@ -1,11 +1,13 @@
 from django.shortcuts import render
-
 from .forms import CustomUserCreationForm
 from django.urls import reverse_lazy
 from django.views.generic.edit import CreateView
+from django.views.generic import TemplateView
 from django.contrib.auth.views import LoginView, PasswordResetView, PasswordResetDoneView, PasswordResetConfirmView, PasswordResetCompleteView
 from django.contrib.auth.decorators import login_required
-
+from django.contrib.auth.mixins import LoginRequiredMixin
+from orders.models import Order, Comment, Rating, OrderItem
+from products.models import Favorite
 
 class SignUpView(CreateView):
     form_class = CustomUserCreationForm
@@ -16,9 +18,23 @@ class SignUpView(CreateView):
 class MyLoginView(LoginView):
     template_name = 'accounts/login.html'
 
-@login_required
-def profile(request):
-    return render(request, 'accounts/profile.html')
+
+class ProfileView(LoginRequiredMixin, TemplateView):
+    template_name = 'accounts/profile.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        user = self.request.user
+
+        context['user'] = user
+        context['orders'] = Order.objects.filter(user=user)
+        context['items'] = OrderItem.objects.all()
+        context['favorites'] = Favorite.objects.filter(user=user)
+        context['comments'] = Comment.objects.filter(user=user)
+        context['ratings'] = Rating.objects.filter(user=user)
+
+        return context
+    
 
 class MyPasswordResetView(PasswordResetView):
     template_name = 'accounts/password_reset_form.html'
