@@ -8,7 +8,7 @@ class Order(models.Model):
     time = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f'{self.user.first_name} ordered {self.product.title}'
+        return f'{self.user.mobile} at {self.time} ordered'
     
 class OrderItem(models.Model):
     order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name='items')
