@@ -10,7 +10,7 @@
 <ul>
   {% for product in products %}
     <li>
-      <a href="{% url 'product-detail' product.pk %}" >{{ product.title }}</a> - {{ product.price }} 
+      <a href="{% url 'product-detail' product.pk %}" >{{ product.title }}</a> - Price: {{ product.price }} - Category: {{ product.category }} 
       
     </li>
     <a href="{% url 'add-to-favorites' product.pk %}"><button style="margin-bottom: 5px; margin-top: 5px;" .h>add to favorite</button></a>
