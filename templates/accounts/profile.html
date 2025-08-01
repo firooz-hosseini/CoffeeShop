@@ -25,7 +25,11 @@
 <h2>Favorites</h2>
 <ul>
     {% for fav in favorites %}
-        <li>{{ fav.product.title }}</li>
+        <li>{{ fav.product.title }}  <button><a href="{% url 'create_order' fav.pk %}">Order Your favorite</a></button></li>
+        
+       
+
+
     {% empty %}
         <li>No favorite product</li>
     {% endfor %}
