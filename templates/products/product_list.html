@@ -14,7 +14,6 @@
       
     </li>
     <a href="{% url 'add-to-favorites' product.pk %}"><button style="margin-bottom: 5px; margin-top: 5px;" .h>add to favorite</button></a>
-    
   
   <form method="post" action="{% url 'create_order' product.pk %}">
     {% csrf_token %}
