@@ -1,17 +1,24 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Create Order for {{ product.title }}</title>
+  <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
-    <h1>  create order for {{ product.title }}</h1>
-
-    <form method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">create</button>
+<body class="bg-amber-100 mt-[250px] ml-[680px] p-6">
+  <div class="bg-yellow-50 rounded-lg shadow-md p-6 max-w-md w-full">
+    <h1 class="text-2xl font-bold text-amber-900 mb-6">Create Order for <span>{{ product.title }}</span></h1>
+    
+    <form method="post" class="space-y-4">
+      {% csrf_token %}
+      {{ form.as_p|safe }}
+      
+      <button type="submit" 
+              class="w-full bg-green-500 hover:bg-green-600 text-white py-2 rounded font-semibold">
+        Create
+      </button>
     </form>
+  </div>
 </body>
 </html>
