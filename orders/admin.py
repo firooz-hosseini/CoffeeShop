@@ -10,7 +10,7 @@ class OrderItemInline(admin.TabularInline):
 
 @admin.register(Order)
 class OrderAdmin(admin.ModelAdmin):
-    list_display = ('user', 'time', 'item_count')
+    list_display = ('user', 'time')
     list_filter = ('time', 'items__product__category')
     search_fields = ('user__first_name', 'user__last_name', 'user__username')
     inlines = [OrderItemInline]
@@ -24,7 +24,7 @@ class OrderItemAdmin(admin.ModelAdmin):
 
 @admin.register(Comment)
 class CommentAdmin(admin.ModelAdmin):
-    list_display = ('user', 'product', 'short_text', 'is_approved', 'time')
+    list_display = ('user', 'product', 'text', 'is_approved', 'time')
     list_filter = ('is_approved', 'time')
     search_fields = ('user__first_name', 'product__title', 'text')
 
