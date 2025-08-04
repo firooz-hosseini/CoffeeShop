@@ -1,5 +1,4 @@
 from django.contrib import admin
-from .models import *
 from .models import Order, OrderItem, Rating, Comment
 
 
@@ -18,8 +17,8 @@ class OrderAdmin(admin.ModelAdmin):
 
 @admin.register(OrderItem)
 class OrderItemAdmin(admin.ModelAdmin):
-    list_display = ('order', 'product', 'quantity')
-    search_fields = ('product__title', 'order__user__first_name')
+    list_display = ['order', 'product', 'quantity']
+    search_fields = ['product__title', 'order__user__first_name']
 
 
 @admin.register(Comment)
@@ -37,5 +36,5 @@ class CommentAdmin(admin.ModelAdmin):
 
 @admin.register(Rating)
 class RatingAdmin(admin.ModelAdmin):
-    list_display = ('user', 'product', 'score')
-    search_fields = ('user__first_name', 'product__title')
+    list_display = ['user', 'product', 'score']
+    search_fields = ['user__first_name', 'product__title']
