@@ -31,7 +31,7 @@
         {% for fav in favorites %}
           <li class="flex justify-between items-center border-b pb-1">
             <p>{{ fav.product.title }}</p>
-            <a href="{% url 'create_order' fav.pk %}" 
+            <a href="{% url 'create_order' fav.product.pk %}" 
                class="bg-yellow-400 hover:bg-yellow-500 text-sm text-black px-3 py-1 rounded">
               Order Your Favorite
             </a>
