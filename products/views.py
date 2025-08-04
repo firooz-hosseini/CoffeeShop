@@ -15,6 +15,11 @@ def user_favorites(request):
     favorite = Favorite.objects.filter(user = request.user)
     return render(request,'favorite/user_favorites.html',{'favorite':favorite})
 
+@login_required
+def remove_from_favorites(request, pk):
+    product = get_object_or_404(Product, pk=pk)
+    Favorite.objects.filter(user=request.user, product=product).delete()
+    return redirect('home')
 
 class ProductListView(ListView):
     model = Product

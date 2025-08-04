@@ -59,6 +59,11 @@
                                 Add to Favorites
                             </button>
                         </a>
+                        <a href="{% url 'remove-favorites' product.pk %}">
+                            <button class="bg-red-400 hover:bg-red-500 text-black px-3 py-1 rounded w-full">
+                                Remove from Favorites
+                            </button>
+                        </a>
                         <form method="post" action="{% url 'create_order' product.pk %}">
                             {% csrf_token %}
                             <button type="submit" class="bg-green-500 hover:bg-green-600 text-black px-3 py-1 rounded w-full ">
