@@ -1,5 +1,9 @@
 from django.contrib import admin
-from .models import *
+from .models import Product, Category, Ingredient, Favorite, Image
+
+@admin.register(Product)
+class ProductAdmin(admin.ModelAdmin):
+    list_filter = ('category', 'ingredient')  
 
 class ImageInline(admin.TabularInline):
     model = Image
