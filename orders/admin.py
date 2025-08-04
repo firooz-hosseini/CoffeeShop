@@ -10,23 +10,23 @@ class OrderItemInline(admin.TabularInline):
 
 @admin.register(Order)
 class OrderAdmin(admin.ModelAdmin):
-    list_display = ('user', 'time', 'item_count')
-    list_filter = ('time', 'items__product__category')
-    search_fields = ('user__first_name', 'user__last_name', 'user__username')
+    list_display = ['user', 'time', 'item_count']
+    list_filter = ['time', 'items__product__category']
+    search_fields = ['user__first_name', 'user__last_name', 'user__username']
     inlines = [OrderItemInline]
 
 
 @admin.register(OrderItem)
 class OrderItemAdmin(admin.ModelAdmin):
-    list_display = ('order', 'product', 'quantity')
-    search_fields = ('product__title', 'order__user__first_name')
+    list_display = ['order', 'product', 'quantity']
+    search_fields = ['product__title', 'order__user__first_name']
 
 
 @admin.register(Comment)
 class CommentAdmin(admin.ModelAdmin):
-    list_display = ('user', 'product', 'short_text', 'is_approved', 'time')
-    list_filter = ('is_approved', 'time')
-    search_fields = ('user__first_name', 'product__title', 'text')
+    list_display = ['user', 'product', 'short_text', 'is_approved', 'time']
+    list_filter = ['is_approved', 'time']
+    search_fields = ['user__first_name', 'product__title', 'text']
 
     action = ['approve_comment']
     
@@ -37,5 +37,5 @@ class CommentAdmin(admin.ModelAdmin):
 
 @admin.register(Rating)
 class RatingAdmin(admin.ModelAdmin):
-    list_display = ('user', 'product', 'score')
-    search_fields = ('user__first_name', 'product__title')
+    list_display = ['user', 'product', 'score']
+    search_fields = ['user__first_name', 'product__title']
