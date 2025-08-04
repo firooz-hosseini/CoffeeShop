@@ -19,15 +19,19 @@
                      Welcome to My Coffee Shop 
                 </h1>
                 <div class="flex flex-wrap justify-center gap-4">
+
+                        {% if user.is_authenticated %}
+                        <a href="{% url 'profile' %}" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-1 rounded">My Profile</a>
+                        <form action="{% url 'logout' %}" method="post">
+                            {% csrf_token %}
+                            <button type="submit" class="bg-red-500 hover:bg-red-600 text-white px-4 py-1 rounded">
+                                Logout
+                            </button>
+                    </form>
+                    {% else %}
                     <a href="{% url 'login' %}" class="bg-green-500 hover:bg-green-600 text-white px-4 py-1 rounded">Login</a>
                     <a href="{% url 'signup' %}" class="bg-green-500 hover:bg-green-600 text-white px-4 py-1 rounded">Signup</a>
-                    <a href="{% url 'profile' %}" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-1 rounded">My Profile</a>
-                    <form action="{% url 'logout' %}" method="post">
-                        {% csrf_token %}
-                        <button type="submit" class="bg-red-500 hover:bg-red-600 text-white px-4 py-1 rounded">
-                            Logout
-                        </button>
-                    </form>
+                {% endif %}
                 </div>  
             </div>
         </div>
