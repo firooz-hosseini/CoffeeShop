@@ -25,6 +25,9 @@ class CustomUserManger(BaseUserManager):
 class CustomUser(AbstractUser):
     mobile = models.CharField(max_length=11,unique=True)
     profile_picture = models.ImageField(upload_to='user_picture/',null=True,blank=True)
+    username = None
     USERNAME_FIELD = 'mobile'
-    REQUIRED_FIELDS = ['email']
     objects = CustomUserManger()
+
+    def __str__(self):
+        return self.mobile

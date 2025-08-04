@@ -5,11 +5,10 @@ from accounts.models import CustomUser
 
 class Order(models.Model):
     user = models.ForeignKey(CustomUser,on_delete=models.CASCADE,related_name='order_user')
-    product = models.ForeignKey(Product,on_delete=models.CASCADE,related_name='order_product')
     time = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f'{self.user.first_name} ordered {self.product.title}'
+        return self.user.first_name
     
 class OrderItem(models.Model):
     order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name='items')

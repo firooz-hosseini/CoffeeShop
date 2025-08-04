@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1>{{ product.title }}</h1>
+    <p>{{ product.description }}</p>
+    <p>price: {{ product.price }} hezar tooman</p>
+    <p>category: {{ product.category }}</p>
+    <p>ingredient: 
+    {% for name in product.ingredient.all %}
+        {{ name.title }},
+    {% endfor %}
+        </p>
+    <h3>pictures:</h3>
+    {% for image in product.image_product.all %}
+        <img src="{{ image.image.url }}" width="200">
+    {% endfor %}
+
+
+</body>
+</html>
