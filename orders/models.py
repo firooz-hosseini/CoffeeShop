@@ -4,8 +4,17 @@ from accounts.models import CustomUser
 
 
 class Order(models.Model):
+    STATUS_CHOICES = [
+        ('pending', 'pending'),
+        ('processing', 'processing'),
+        ('delivered', 'delivered'),
+        ('canceled', 'canceled'),
+        ('failed', 'failed'),
+    ]
+
     user = models.ForeignKey(CustomUser,on_delete=models.CASCADE,related_name='order_user')
     time = models.DateTimeField(auto_now_add=True)
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
 
     def __str__(self):
         return f'{self.user.first_name} at {self.time} ordered'
