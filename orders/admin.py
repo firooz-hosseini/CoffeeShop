@@ -40,10 +40,15 @@ class RatingAdmin(admin.ModelAdmin):
     search_fields = ['user__first_name', 'product__title']
 
 
+@admin.action(description="Mark selected notifications as read")
+def mark_as_read(modeladmin, request, queryset):
+    queryset.update(is_read=True)
+
 
 @admin.register(Notification)
 class NotificationAdmin(admin.ModelAdmin):
     list_display = ('message', 'is_read', 'created_at')
     list_filter = ('is_read', 'created_at')
     search_fields = ('message',)
-
+    actions = [mark_as_read]
+    
