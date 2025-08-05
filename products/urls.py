@@ -7,5 +7,5 @@ urlpatterns = [
     path('favorites/',views.user_favorites,name='user_favorites'),
     path('product-list/', views.ProductListView.as_view(), name='product-list'),
     path('product-detail/<int:pk>/', views.ProductDetailView.as_view(), name='product-detail'), 
-    
+     path('product/<int:product_id>/comment/', views.add_comment, name='add-comment'),  
 ]

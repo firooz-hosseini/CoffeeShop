@@ -14,16 +14,44 @@
     {% for name in product.ingredient.all %}
         {{ name.title }},
     {% endfor %}
-        </p>
+    </p>
     <h3>pictures:</h3>
     {% for image in product.image_product.all %}
         <img src="{{ image.image.url }}" width="200">
     {% endfor %}
 
+    <button><a href="{% url 'home' %}">Back to Home</a></button>
 
-<button><a href="{% url 'home' %}">Back to Home</a></button>
+    
+    <h3>ارسال نظر:</h3> 
+    <form method="post" action="{% url 'add-comment' product.id %}"> 
+        {% csrf_token %}
+        <textarea name="text" rows="3" cols="50" placeholder="نظر خود را بنویسید..."></textarea><br> 
+        <label for="rating">امتیاز از ۵:</label> 
+        <select name="rating"> 
+            <option value="1">⭐</option> 
+            <option value="2">⭐⭐</option> 
+            <option value="3">⭐⭐⭐</option> 
+            <option value="4">⭐⭐⭐⭐</option> 
+            <option value="5">⭐⭐⭐⭐⭐</option> 
+        </select><br> 
+        <button type="submit">ثبت نظر</button> 
+    </form> 
 
-
-
+    
+    <h3>نظرات کاربران:</h3> 
+    {% for comment in product.product_comment.all %} 
+      {% if comment.is_approved %} 
+        <div> 
+          <strong>{{ comment.user }}</strong> 
+          {% if comment.purchased %}<span style="color:green;">✅ خریدار</span>{% endif %} 
+          <br> 
+          امتیاز: {{ comment.rating }} / 5
+          <p>{{ comment.text }}</p>  
+        </div> 
+        <hr> 
+      {% endif %} 
+    {% endfor %} 
 </body>
 </html>
+پروداکت دیتیل
