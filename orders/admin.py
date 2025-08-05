@@ -1,5 +1,6 @@
 from django.contrib import admin
 from .models import Order, OrderItem, Rating, Comment, Notification
+from django.template.response import TemplateResponse
 
 
 class OrderItemInline(admin.TabularInline):
@@ -50,5 +51,6 @@ class NotificationAdmin(admin.ModelAdmin):
     list_display = ('message', 'is_read', 'created_at')
     list_filter = ('is_read', 'created_at')
     search_fields = ('message',)
+    ordering = ('-created_at',)
     actions = [mark_as_read]
-    
+

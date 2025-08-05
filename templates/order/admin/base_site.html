@@ -1,0 +1,9 @@
+{% extends "admin/base.html" %}
+{% block branding %}
+  <h1 id="site-name"><a href="{% url 'admin:index' %}">پنل مدیریت</a></h1>
+  {% if admin_unread_notifications %}
+    <div style="color: red; font-weight: bold; margin-top: 10px;">
+      🔔 شما {{ admin_unread_notifications }} نوتیف جدید دارید
+    </div>
+  {% endif %}
+{% endblock %}
