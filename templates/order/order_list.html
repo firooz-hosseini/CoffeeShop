@@ -7,10 +7,9 @@
       <ul>
         {% for item in order.items.all %}
           <li style="margin-bottom:15px;">
-            <strong>{{ item.product.title }}</strong><br>
-            Quantity: {{ item.quantity }}<br>
-            Price: {{ item.product.price }} R<br>
-            Context: {{ item.product.description }}<br>
+             {% for item in order.items.all %}
+          <li>{{ item.product.title }} - {{ item.quantity }} - {{ item.product.price }} R</li>
+        {% endfor %}
 
             {% with item.product.image_product.first as image %}
               {% if image %}
