@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Order, OrderItem, Rating, Comment
+from .models import Order, OrderItem, Rating, Comment, Notification
 
 
 class OrderItemInline(admin.TabularInline):
@@ -38,3 +38,12 @@ class CommentAdmin(admin.ModelAdmin):
 class RatingAdmin(admin.ModelAdmin):
     list_display = ['user', 'product', 'score']
     search_fields = ['user__first_name', 'product__title']
+
+
+
+@admin.register(Notification)
+class NotificationAdmin(admin.ModelAdmin):
+    list_display = ('message', 'is_read', 'created_at')
+    list_filter = ('is_read', 'created_at')
+    search_fields = ('message',)
+

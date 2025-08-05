@@ -46,3 +46,13 @@ class Rating(models.Model):
 
     def __str__(self):
         return f'User: {self.user.first_name}, Product: {self.product.title}, Score: {self.score}'
+    
+
+    
+class Notification(models.Model):
+    message = models.TextField()
+    is_read = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+    
+    def __str__(self):
+        return self.message[:50]
