@@ -8,7 +8,7 @@ from django.views.generic import ListView, DetailView
 def add_to_favorites(request,product_id):
     product = get_object_or_404(Product,id = product_id)
     Favorite.objects.create(user = request.user,product = product)
-    return redirect('product-detail', pk=product.id)
+    return redirect('home')
    
 @login_required
 def user_favorites(request):
