@@ -16,6 +16,10 @@ class Order(models.Model):
     time = models.DateTimeField(auto_now_add=True)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
 
+    @property
+    def total_price(self):
+        return sum((item.product.price * item.quantity for item in self.items.all()))
+
     def __str__(self):
         return f'{self.user.first_name} at {self.time} ordered'
 
