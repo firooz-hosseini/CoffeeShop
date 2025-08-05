@@ -1,0 +1,29 @@
+<h1>My Orders</h1>
+
+{% if orders %}
+  {% for order in orders %}
+    <div style="border:1px solid #ccc; margin:20px; padding:10px;">
+      <h3> Order Id {{ order.id }} - Date: {{ order.time }}</h3>
+      <ul>
+        {% for item in order.items.all %}
+          <li style="margin-bottom:15px;">
+            <strong>{{ item.product.title }}</strong><br>
+            Quantity: {{ item.quantity }}<br>
+            Price: {{ item.product.price }} R<br>
+            Context: {{ item.product.description }}<br>
+
+            {% with item.product.image_product.first as image %}
+              {% if image %}
+                <img src="{{ image.image.url }}" alt="{{ item.product.title }}" width="150">
+              {% else %}
+                <em> Without Image</em>
+              {% endif %}
+            {% endwith %}
+          </li>
+        {% endfor %}
+      </ul>
+    </div>
+  {% endfor %}
+{% else %}
+  <p>you did not register any order!</p>
+{% endif %}
