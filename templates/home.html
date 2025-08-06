@@ -69,17 +69,19 @@
                         class="bg-amber-600 hover:bg-amber-700 text-black py-2 px-4 rounded text-center ">
                         View Details
                      </a>
-                     
+                     {% if product.id not in favorite_product_ids%}
                         <a href="{% url 'add-to-favorites' product.pk %}">
                             <button class="bg-yellow-400 hover:bg-yellow-500 text-black px-3 py-1 rounded w-full ">
                                 Add to Favorites
                             </button>
                         </a>
+                        {% else %}
                         <a href="{% url 'remove-favorites' product.pk %}">
                             <button class="bg-red-400 hover:bg-red-500 text-black px-3 py-1 rounded w-full">
                                 Remove from Favorites
                             </button>
                         </a>
+                        {% endif %}
                         <form method="post" action="{% url 'create_order' product.pk %}">
                             {% csrf_token %}
                             <button type="submit" class="bg-green-500 hover:bg-green-600 text-black px-3 py-1 rounded w-full ">
