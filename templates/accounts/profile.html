@@ -19,7 +19,7 @@
       <h2 class="text-xl font-semibold mb-2">Orders</h2>
       <ul class="list-disc list-inside space-y-1">
         {% for item in items %}
-          <li>{{ item.quantity }} + {{ item.product.title }} : {{ item.order.time }}</li>
+          <li>{{ item.quantity }} + {{ item.product.title }}</li>
         {% empty %}
           <li class="text-gray-500">No order is found</li>
         {% endfor %}
