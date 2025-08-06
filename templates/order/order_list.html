@@ -1,28 +1,57 @@
-<h1>My Orders</h1>
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>My Orders</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-amber-100 text-gray-800">
 
-{% if orders %}
-  {% for order in orders %}
-    <div style="border:1px solid #ccc; margin:20px; padding:10px;">
-      <h3> Order Id {{ order.id }} - Date: {{ order.time }}</h3>
-      <ul>
-        {% for item in order.items.all %}
-          <li style="margin-bottom:15px;">
-             {% for item in order.items.all %}
-          <li>{{ item.product.title }} - {{ item.quantity }} - {{ item.product.price }} R</li>
-        {% endfor %}
+    <div class="max-w-5xl mx-auto px-6 py-12">
 
-            {% with item.product.image_product.first as image %}
-              {% if image %}
-                <img src="{{ image.image.url }}" alt="{{ item.product.title }}" width="150">
-              {% else %}
-                <em> Without Image</em>
-              {% endif %}
-            {% endwith %}
-          </li>
-        {% endfor %}
-      </ul>
+        <h1 class="text-3xl font-bold text-amber-800 mb-6 text-center">My Orders</h1>
+
+        {% if orders %}
+          <div class="space-y-8">
+            {% for order in orders %}
+              <div class="bg-white shadow-md border border-amber-200 rounded-lg p-6">
+                <h3 class="text-xl font-semibold text-amber-700 mb-4">
+                  Order ID: {{ order.id }}
+                  <span class="text-gray-500 text-sm">| Date: {{ order.time|date:"Y-m-d H:i" }}</span>
+                </h3>
+
+                <ul class="space-y-4">
+                  {% for item in order.items.all %}
+                    <li class="flex items-center gap-4 bg-yellow-50 p-4 rounded border border-yellow-100">
+                      <div class="w-24 h-24 flex-shrink-0">
+                        {% with item.product.image_product.first as image %}
+                          {% if image %}
+                            <img src="{{ image.image.url }}" alt="{{ item.product.title }}"
+                                 class="w-full h-full object-cover rounded border">
+                          {% else %}
+                            <div class="w-full h-full flex items-center justify-center bg-gray-100 text-gray-400 text-sm border rounded">
+                              No Image
+                            </div>
+                          {% endif %}
+                        {% endwith %}
+                      </div>
+                      <div>
+                        <p class="font-semibold text-amber-900">{{ item.product.title }}</p>
+                        <p class="text-sm text-gray-600">Quantity: {{ item.quantity }}</p>
+                        <p class="text-sm text-green-700">Price: {{ item.product.price }} R</p>
+                      </div>
+                    </li>
+                  {% endfor %}
+                </ul>
+              </div>
+            {% endfor %}
+          </div>
+        {% else %}
+          <p class="text-gray-600 mt-6 text-center">You did not register any order!</p>
+        {% endif %}
+
     </div>
-  {% endfor %}
-{% else %}
-  <p>you did not register any order!</p>
-{% endif %}
+
+</body>
+</html>
