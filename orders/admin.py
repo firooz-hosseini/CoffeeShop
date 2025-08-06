@@ -1,4 +1,4 @@
-from django.contrib import admin
+from django.contrib import admin, messages
 from .models import Order, OrderItem, Rating, Comment, Notification
 from django.template.response import TemplateResponse
 
@@ -15,6 +15,11 @@ class OrderAdmin(admin.ModelAdmin):
     search_fields = ('user__first_name', 'user__last_name', 'user__username')
     inlines = [OrderItemInline]
 
+    def save_model(self, request, obj, form, change):
+        super().save_model(request, obj, form, change)
+
+        if hasattr(obj, '_new_order') and obj._new_order:
+            messages.success(request, "A new order is registered")
 
 @admin.register(OrderItem)
 class OrderItemAdmin(admin.ModelAdmin):

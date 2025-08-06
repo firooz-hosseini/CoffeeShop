@@ -1,10 +1,8 @@
-# orders/signals.py
-
 from django.db.models.signals import post_save
 from django.dispatch import receiver
-from .models import Order, Notification
+from .models import Order
 
 @receiver(post_save, sender=Order)
-def create_order_notification(sender, instance, created, **kwargs):
+def order_created(sender, instance, created, **kwargs):
     if created:
-        Notification.objects.create(message = f'{instance.user.mobile} registered a new order ')
+        instance._new_order = True
