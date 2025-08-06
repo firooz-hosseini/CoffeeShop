@@ -3,6 +3,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib.auth.mixins import LoginRequiredMixin
 from .models import Order, OrderItem, Notification
 from products.models import Product
+from django.views.generic import ListView
 from .forms import CreateOrderItemForm
 
 
@@ -26,3 +27,12 @@ class CreateOrderView(LoginRequiredMixin, View):
 
 def order_success(request):
     return render(request, 'order/order_success.html')
+
+
+class OrderListView(LoginRequiredMixin, ListView):
+    model = Order
+    context_object_name = 'orders'
+    template_name = 'order/order_list.html'
+
+    def get_queryset(self):
+        return Order.objects.filter(user=self.request.user).prefetch_related('items__product__image_product')

@@ -9,9 +9,13 @@ class OrderItemInline(admin.TabularInline):
 
 @admin.register(Order)
 class OrderAdmin(admin.ModelAdmin):
-    list_display = ('user', 'time', 'seen_by_admin')
-    list_filter = ('seen_by_admin', 'time', 'items__product__category')
-    search_fields = ('user__first_name', 'user__last_name', 'user__username')
+
+
+    list_display = ['user', 'time', 'status', 'seen_by_admin']
+    list_filter = ['time', 'items__product__category', 'status', 'seen_by_admin']
+    search_fields = ['user__first_name', 'user__last_name', 'user__username']
+    list_editable = ['status']
+    
     inlines = [OrderItemInline]
 
 
