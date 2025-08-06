@@ -61,7 +61,8 @@
                   {% endfor %}
                 </ul>
                 {% if user == order.user %}
-                  <div class="mt-6 text-right">
+                <div class="mt-6 text-right">
+                  <div class="flex justify-end gap-3">
                     <form method="post" action="{% url 'cancel_order' order.id %}">
                       {% csrf_token %}
                       <button type="submit"
@@ -69,7 +70,15 @@
                         Cancel Order
                       </button>
                     </form>
+                    <form method="post" action="{% url 'delete_order' order.id %}">
+                      {% csrf_token %}
+                      <button type="submit"
+                              class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600">
+                        Delete Order
+                      </button>
+                    </form>
                   </div>
+                </div>
                 {% endif %}
               </div>
             {% endfor %}
