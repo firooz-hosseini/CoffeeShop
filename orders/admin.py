@@ -9,21 +9,26 @@ class OrderItemInline(admin.TabularInline):
 
 @admin.register(Order)
 class OrderAdmin(admin.ModelAdmin):
-    list_display = ('user', 'time')
-    list_filter = ('time', 'items__product__category')
+    list_display = ('user', 'time', 'seen_by_admin')
+    list_filter = ('seen_by_admin', 'time', 'items__product__category')
     search_fields = ('user__first_name', 'user__last_name', 'user__username')
     inlines = [OrderItemInline]
+
+
+
 
     def changelist_view(self, request, extra_context=None):
         new_orders = Order.objects.filter(seen_by_admin=False)
         count = new_orders.count()
 
         if count > 0:
-            messages.warning(request, f"{count} new order registered")
-
-        new_orders.update(seen_by_admin=True)
-
+            messages.warning(request, f"🔔{count} new order registered")
         return super().changelist_view(request, extra_context=extra_context)
+    
+    
+    def save_model(self, request, obj, form, change):
+        obj.seen_by_admin = True
+        super().save_model(request, obj, form, change)
     
 
 
