@@ -1,6 +1,6 @@
-from orders.models import Notification
+from django.core.cache import cache
 
-def notifications(request):
+def new_order_notifications(request):
     return {
-        'notifications': Notification.objects.filter(is_read=False).order_by('-created_at')
+        'new_order_count': cache.get('new_order_count', 0)
     }

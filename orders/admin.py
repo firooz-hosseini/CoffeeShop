@@ -1,7 +1,6 @@
 from django.contrib import admin, messages
 from .models import Order, OrderItem, Rating, Comment, Notification
-from django.template.response import TemplateResponse
-
+from django.core.cache import cache
 
 class OrderItemInline(admin.TabularInline):
     model = OrderItem
@@ -15,11 +14,18 @@ class OrderAdmin(admin.ModelAdmin):
     search_fields = ('user__first_name', 'user__last_name', 'user__username')
     inlines = [OrderItemInline]
 
-    def save_model(self, request, obj, form, change):
-        super().save_model(request, obj, form, change)
+    def changelist_view(self, request, extra_context=None):
+        new_orders = Order.objects.filter(seen_by_admin=False)
+        count = new_orders.count()
 
-        if hasattr(obj, '_new_order') and obj._new_order:
-            messages.success(request, "A new order is registered")
+        if count > 0:
+            messages.warning(request, f"{count} new order registered")
+
+        new_orders.update(seen_by_admin=True)
+
+        return super().changelist_view(request, extra_context=extra_context)
+    
+
 
 @admin.register(OrderItem)
 class OrderItemAdmin(admin.ModelAdmin):
