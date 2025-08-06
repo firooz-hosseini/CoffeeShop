@@ -1,0 +1,29 @@
+{% extends "admin/base_site.html" %}
+
+{% block content %}
+    <p style="color: red;">THIS IS A TEST</p>
+    {% if notifications %}
+        <div style="background-color: #ffc107; padding: 10px; margin-bottom: 20px;">
+            <h3>نوتیفیکیشن‌های جدید</h3>
+            <ul>
+                {% for note in notifications %}
+                    <li>{{ note.message }} - {{ note.created_at|date:"Y-m-d H:i" }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+    {% endif %}
+
+    <div class="module">
+        <h2>آخرین سفارش‌ها</h2>
+        <ul>
+            {% for order in recent_orders %}
+                <li>order #{{ order.id }} by {{ order.user.mobile }} - {{ order.time }}</li>
+            {% empty %}
+                <li>سفارشی وجود ندارد.</li>
+            {% endfor %}
+        </ul>
+    </div>
+
+    {{ block.super }}
+
+{% endblock %}

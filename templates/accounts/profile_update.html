@@ -1,21 +1,32 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+  <meta charset="UTF-8">
+  <title>Edit Profile</title>
+  <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
-    <h1>Edit Profile</h1>
+<body class="bg-amber-100 min-h-screen flex items-center justify-center py-10 px-4">
 
-<form method="post" enctype="multipart/form-data">
-    {% csrf_token %}
-    {{ form.as_p }}
+  <div class="bg-gray-100 p-8 rounded-lg shadow-lg w-full max-w-md">
+    <h1 class="text-2xl font-bold text-center mb-6 text-gray-700">Edit Profile</h1>
 
-    <button type="submit">Save Changes</button>
-</form>
+    <form method="post" enctype="multipart/form-data" class="space-y-4">
+      {% csrf_token %}
+      {{ form.as_p }}
 
-<a href="{% url 'profile' %}">Back to Profile</a>
+      <button type="submit"
+              class="w-full bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded">
+        Save Changes
+      </button>
+    </form>
+
+    <div class="mt-6 text-center">
+      <a href="{% url 'profile' %}"
+         class="bg-gray-200 hover:bg-gray-300 text-sm text-black px-3 py-1 rounded">
+        Back to Profile
+      </a>
+    </div>
+  </div>
 
 </body>
 </html>

@@ -31,7 +31,7 @@ class ProfileView(LoginRequiredMixin, TemplateView):
 
         context['user'] = user
         context['orders'] = Order.objects.filter(user=user)
-        context['items'] = OrderItem.objects.all()
+        context['items'] = OrderItem.objects.filter(order__user=user)
         context['favorites'] = Favorite.objects.filter(user=user)
         context['comments'] = Comment.objects.filter(user=user)
         context['ratings'] = Rating.objects.filter(user=user)
