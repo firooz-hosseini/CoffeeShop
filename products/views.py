@@ -1,6 +1,6 @@
-from django.shortcuts import render , get_object_or_404 , redirect
+from django.shortcuts import render , get_object_or_404 , redirect 
 from django.contrib.auth.decorators import login_required
-from .models import Product,Favorite
+from .models import *
 from django.views.generic import ListView, DetailView
 
 
@@ -25,6 +25,22 @@ class ProductListView(ListView):
     model = Product
     template_name = 'products/product_list.html'
     context_object_name = 'products'
+
+    def product_list(request):
+        category_id = request.GET.get('Category')
+        categories = Category.objects.all()
+
+        if category_id:
+            products = Product.objects.filter(category_id=category_id)
+        else:
+            products = Product.objects.all()
+
+
+        return render(request, 'product_list.html', {
+            'products': products,
+            'categories': categories,
+            'selected_category': int(category_id) if category_id else None,
+        })
 
 
 class ProductDetailView(DetailView):

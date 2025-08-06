@@ -27,3 +27,28 @@
 </body>
 </html>
 
+
+
+ <!-- <form method="get">
+  <select name="category" onchange="this.form.submit()">
+    <option value="">All categories</option>
+    {% for category in categories %}
+      <option value="{{ category.id }}" {% if selected_category == category.id %}selected{% endif %}>
+        {{ category.title }}
+      </option>
+    {% endfor %}
+  </select>
+</form>
+
+<hr>
+
+{% for product in products %}
+  <div>
+    <h3>{{ product.title }}</h3>
+    <p>{{ product.description|truncatewords:20 }}</p>
+    <p>price: {{ product.price }} R</p>
+    <p>category: {{ product.category.title }}</p>
+  </div>
+{% empty %}
+  <p> Nothing found!</p>
+{% endfor %} -->
