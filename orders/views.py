@@ -5,6 +5,7 @@ from .models import Order, OrderItem, Notification
 from products.models import Product
 from .forms import CreateOrderItemForm
 
+
 class CreateOrderView(LoginRequiredMixin, View):
     def get(self, request, product_id):
         product = get_object_or_404(Product, id=product_id)
@@ -25,5 +26,3 @@ class CreateOrderView(LoginRequiredMixin, View):
 
 def order_success(request):
     return render(request, 'order/order_success.html')
-
-
