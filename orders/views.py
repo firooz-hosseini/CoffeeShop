@@ -6,6 +6,7 @@ from .models import Order, OrderItem, Notification
 from products.models import Product
 from django.views.generic import ListView
 from .forms import CreateOrderItemForm
+from django.contrib.auth.decorators import login_required
 
 
 class CreateOrderView(LoginRequiredMixin, View):
@@ -48,3 +49,11 @@ def cancel_order_view(request, order_id):
         messages.error(request, str(e))
 
     return redirect('order_list')
+
+@login_required
+def delete_order_view(request, order_id):
+    order = get_object_or_404(Order, pk=order_id, user=request.user)
+
+    if request.method == 'POST':
+        order.delete()
+        return redirect('order_list')
