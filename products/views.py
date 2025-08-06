@@ -8,13 +8,18 @@ from django.views.generic import ListView, DetailView
 def add_to_favorites(request,product_id):
     product = get_object_or_404(Product,id = product_id)
     Favorite.objects.create(user = request.user,product = product)
-    return redirect('product-detail', pk=product.id)
+    return redirect('home')
    
 @login_required
 def user_favorites(request):
     favorite = Favorite.objects.filter(user = request.user)
     return render(request,'favorite/user_favorites.html',{'favorite':favorite})
 
+@login_required
+def remove_from_favorites(request, pk):
+    product = get_object_or_404(Product, pk=pk)
+    Favorite.objects.filter(user=request.user, product=product).delete()
+    return redirect('home')
 
 class ProductListView(ListView):
     model = Product
