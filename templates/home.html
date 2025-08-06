@@ -38,8 +38,8 @@
         <div class="w-44 absolute top-[283px] right-[100px]">
             <form method="get" class="bg-yellow-50 border border-amber-300 rounded p-4 shadow max-h-[300px] overflow-y-auto">
                 <h3 class="font-semibold text-amber-900 mb-4 text-center">Filter by Category</h3>
-                <select class="w-full mb-4 border border-gray-300 rounded p-2">
-                    <option>All Categories</option>
+                <select name="category" class="w-full mb-4 border border-gray-300 rounded p-2">
+                    <option value="">All Categories</option>
                     {% for cat in categories %}
                         <option value="{{ cat.id }}" {% if request.GET.category == cat.id %}selected{% endif %}>
                             {{ cat.title }}
