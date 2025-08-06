@@ -1,6 +1,7 @@
 from django.views import View
 from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib import messages
 from .models import Order, OrderItem, Notification
 from products.models import Product
 from django.views.generic import ListView
@@ -36,3 +37,31 @@ class OrderListView(LoginRequiredMixin, ListView):
 
     def get_queryset(self):
         return Order.objects.filter(user=self.request.user).prefetch_related('items__product__image_product')
+
+
+def deliver_order_view(request, order_id):
+    order = get_object_or_404(Order, pk=order_id)
+
+    if not request.user.is_staff:
+        messages.error(request, 'You do not have permission!')
+        return redirect ('order_list')
+    
+    try:
+        order.mark_as_delivered()
+        messages.success(request, 'The order was successfully delivered')
+    except ValueError as e:
+        messages.error(request, str(e))
+
+    return redirect('order_list')
+
+
+def cancel_order_view(request, order_id):
+    order = get_object_or_404(Order, pk=order_id, user=request.user)
+
+    try:
+        order.mark_as_canceled()
+        messages.success(request, 'The order was successfully canceled')
+    except ValueError as e:
+        messages.error(request, str(e))
+
+    return redirect('order_list')
