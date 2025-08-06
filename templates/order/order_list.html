@@ -4,25 +4,30 @@
   {% for order in orders %}
     <div style="border:1px solid #ccc; margin:20px; padding:10px;">
       <h3> Order Id {{ order.id }} - Date: {{ order.time }}</h3>
+      <p>Status: <strong>{{ order.status }}</strong></p>
       <ul>
         {% for item in order.items.all %}
           <li style="margin-bottom:15px;">
-             {% for item in order.items.all %}
-          <li>{{ item.product.title }} - {{ item.quantity }} - {{ item.product.price }} R</li>
-        {% endfor %}
-
+            {{ item.product.title }} - {{ item.quantity }} - {{ item.product.price }} R
             {% with item.product.image_product.first as image %}
               {% if image %}
-                <img src="{{ image.image.url }}" alt="{{ item.product.title }}" width="150">
+                <br><img src="{{ image.image.url }}" alt="{{ item.product.title }}" width="150">
               {% else %}
-                <em> Without Image</em>
+                <br><em>Without Image</em>
               {% endif %}
             {% endwith %}
           </li>
         {% endfor %}
       </ul>
+
+      {% if order.status == "pending" %}
+        <form method="post" action="{% url 'cancel_order' order.id %}">
+          {% csrf_token %}
+          <button type="submit">لغو</button>
+        </form>
+      {% endif %}
     </div>
   {% endfor %}
 {% else %}
-  <p>you did not register any order!</p>
+  <p>You did not register any order!</p>
 {% endif %}

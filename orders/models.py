@@ -6,10 +6,8 @@ from accounts.models import CustomUser
 class Order(models.Model):
     STATUS_CHOICES = [
         ('pending', 'pending'),
-        ('processing', 'processing'),
         ('delivered', 'delivered'),
         ('canceled', 'canceled'),
-        ('failed', 'failed'),
     ]
 
     user = models.ForeignKey(CustomUser,on_delete=models.CASCADE,related_name='order_user')
@@ -19,6 +17,18 @@ class Order(models.Model):
     @property
     def total_price(self):
         return sum((item.product.price * item.quantity for item in self.items.all()))
+    
+    def mark_as_delivered(self):
+        if self.status != 'pending':
+            raise ValueError('Only pending orders can be marked as delivered.')
+        self.status = 'delivered'
+        self.save()
+
+    def mark_as_canceled(self):
+        if self.status != 'pending':
+            raise ValueError('Only pending orders can be marked as canceled.')
+        self.status = 'canceled'
+        self.save()
 
     def __str__(self):
         return f'{self.user.first_name} at {self.time} ordered'
