@@ -7,4 +7,3 @@ urlpatterns = [
     path('success/', views.order_success, name='order_success'),
     path('my-orders/', views.OrderListView.as_view(), name='order_list'),
 ]
-
