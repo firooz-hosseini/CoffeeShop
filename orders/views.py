@@ -1,9 +1,11 @@
 from django.views import View
+from django.views.generic.edit import CreateView
+from django.urls import reverse_lazy
 from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib import messages
 from django.views.generic import ListView
-from .models import Order, OrderItem ,Product
+from .models import Order, OrderItem, Product, Comment
 from .forms import CreateOrderItemForm
 
 class CreateOrderView(LoginRequiredMixin, View):
@@ -67,3 +69,23 @@ def cancel_order_view(request, order_id):
 def order_list(request):
     orders = Order.objects.all()
     return render(request, 'order_list.html', {'orders':orders})
+
+
+class CommentCreateView(LoginRequiredMixin, CreateView):
+    model = Comment
+    fields = ['text']
+    template_name = 'order/comment_form.html'
+
+    def dispatch(self, request, *args, **kwargs):
+        self.product = get_object_or_404(Product, pk=kwargs['product_id'])
+        return super().dispatch(request, *args, **kwargs)
+
+    def form_valid(self, form):
+        form.instance.user = self.request.user
+        form.instance.product = self.product
+        if not form.instance.purchased_before:
+            return self.handle_no_permission()
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        return reverse_lazy('product_detail', kwargs={'pk': self.product.pk})
