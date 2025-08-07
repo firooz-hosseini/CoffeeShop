@@ -8,50 +8,7 @@
 </head>
 <body class="bg-amber-100 text-gray-800">
     <div class="max-w-5xl mx-auto px-6 py-12">
-
-{% if orders %}
-  {% for order in orders %}
-    <div style="border: 1px solid #ccc; margin: 20px 0; padding: 15px;">
-      <h3>Order ID: {{ order.id }} - Date: {{ order.time|date:"Y/m/d H:i" }}</h3>
-      <p>Ordered by: {{ order.user.first_name }}</p>
-      <p><strong>Status:</strong> {{ order.status }}</p>
-
-      <h4>Items:</h4>
-      <ul style="list-style: none; padding: 0;">
-        {% for item in order.items.all %}
-          <li style="margin-bottom: 20px;">
-            <strong>{{ item.product.title }}</strong>  
-            (Quantity: {{ item.quantity }}) - 
-            Unit Price: {{ item.product.price }} R
-
-            {% with item.product.image_product.first as image %}
-              {% if image %}
-                <br>
-                <img src="{{ image.image.url }}" alt="{{ item.product.title }}" width="150">
-              {% else %}
-                <br><em>No image available</em>
-              {% endif %}
-            {% endwith %}
-          </li>
-        {% endfor %}
-      </ul>
-
-      <p><strong>Total Price:</strong> {{ order.total_price }} R</p>
-
-      {% if order.status == "pending" %}
-        <form method="post" action="{% url 'cancel_order' order.id %}">
-          {% csrf_token %}
-          <button type="submit">Cancel Order</button>
-        </form>
-      {% endif %}
-    </div>
-  {% endfor %}
-{% else %}
-  <p>You have not placed any orders yet.</p>
-{% endif %}
   
-  
-<!--   
         <h1 class="text-3xl font-bold text-amber-800 mb-6 text-center">My Orders</h1>
 
         {% if messages %}
@@ -128,7 +85,7 @@
           </div>
         {% else %}
           <p class="text-gray-600 mt-6 text-center">You did not register any order!</p>
-           {% endif %} -->
+           {% endif %}
 
     </div> 
 
