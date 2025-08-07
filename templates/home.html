@@ -12,16 +12,16 @@
 <div class="max-w-6xl mx-auto px-4 py-10">
 
     <!-- Header Box -->
-    <div class="bg-yellow-50 rounded-lg shadow-lg p-6 mb-10 border border-stone-300">
+    <div id="header" class="bg-yellow-50 rounded-lg shadow-lg p-6 mb-10 border border-stone-300">
         <div class="text-center">
             <h1 class="text-4xl font-extrabold text-amber-800 mb-6">
                 Welcome to My Coffee Shop 
             </h1>
             <div class="flex flex-wrap justify-center gap-4">
                 {% if user.is_authenticated %}
+                <a href="{% url 'order_list' %}" class="bg-purple-500 hover:bg-purple-600 text-white px-4 py-1 rounded">Shopping Cart</a>
                     <a href="{% url 'profile' %}" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-1 rounded">My Profile</a>
-                    <a href="{% url 'order_list' %}" class="bg-purple-500 hover:bg-purple-600 text-white px-4 py-1 rounded">My Order</a>
-                    <form action="{% url 'logout' %}" method="post">
+                    <form action="{% url 'logout' %}" method="post" class="inline">
                         {% csrf_token %}
                         <button type="submit" class="bg-red-500 hover:bg-red-600 text-white px-4 py-1 rounded">Logout</button>
                     </form>
@@ -34,32 +34,14 @@
     </div>
 
     <!-- Products & Sidebar Layout -->
-    <div class="flex flex-col lg:flex-row gap-8">
-
-        <!-- Sidebar Filter -->
-        <div class="w-full lg:w-1/4">
-            <form method="get" class="bg-yellow-50 border border-amber-300 rounded p-4 shadow max-h-[300px] overflow-y-auto sticky top-8">
-                <h3 class="font-semibold text-amber-900 mb-4 text-center">Filter by Category</h3>
-                <select name="category" class="w-full mb-4 border border-gray-300 rounded p-2">
-                    <option value="">All Categories</option>
-                    {% for cat in categories %}
-                        <option value="{{ cat.id }}" {% if request.GET.category == cat.id %}selected{% endif %}>
-                            {{ cat.title }}
-                        </option>
-                    {% endfor %}
-                </select>
-                <button type="submit" class="w-full bg-amber-600 hover:bg-amber-700 text-white py-1 px-3 rounded">
-                    Apply Filter
-                </button>
-            </form>
-        </div>
+    <div class="flex gap-8 min-h-[300px]">
 
         <!-- Product Grid -->
-        <div class="w-full lg:w-3/4">
+        <div class="w-full lg:w-5/6" style="min-height: 200px;">
             <h2 class="text-2xl font-bold text-amber-900 mb-6">My Products</h2>
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-6"> 
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 h-full overflow-auto"> 
                 {% for product in products %}
-                    <div class="bg-yellow-50 rounded-xl shadow-md border border-amber-200 p-4">
+                    <div class="bg-yellow-50 rounded-xl shadow-md border border-amber-200 p-4 flex flex-col">
                         <h3 class="text-lg font-semibold text-amber-900 mb-2">{{ product.title }}</h3>
                         <p class="text-green-500 mb-2">{{ product.price }} hezar toman</p>
 
@@ -68,7 +50,7 @@
                                  class="w-full h-40 object-cover rounded-lg mb-2 border border-gray-200">
                         {% endif %}
 
-                        <div class="flex flex-col space-y-2">
+                        <div class="flex flex-col space-y-2 mt-auto">
                             <a href="{% url 'product-detail' product.pk %}"
                                class="bg-amber-600 hover:bg-amber-700 text-black py-2 px-4 rounded text-center">
                                 View Details
@@ -100,6 +82,24 @@
                     <p class="text-gray-600 col-span-full text-center">No products available.</p>
                 {% endfor %}
             </div>
+        </div>
+
+        <!-- Sidebar Filter -->
+        <div class="w-1/6 sticky top-8 h-fit">
+            <form method="get" class="bg-yellow-50 border border-amber-300 rounded p-4 shadow max-h-[300px] overflow-y-auto">
+                <h3 class="font-semibold text-amber-900 mb-4 text-center text-sm">Filter by Category</h3>
+                <select name="category" class="w-full mb-4 border border-gray-300 rounded p-2 text-sm">
+                    <option value="">All Categories</option>
+                    {% for cat in categories %}
+                        <option value="{{ cat.id }}" {% if request.GET.category == cat.id %}selected{% endif %}>
+                            {{ cat.title }}
+                        </option>
+                    {% endfor %}
+                </select>
+                <button type="submit" class="w-full bg-amber-600 hover:bg-amber-700 text-white py-1 px-3 rounded text-sm">
+                    Apply Filter
+                </button>
+            </form>
         </div>
 
     </div>

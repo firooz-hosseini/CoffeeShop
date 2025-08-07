@@ -136,5 +136,5 @@ EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 
 EMAIL_HOST_USER = 'firo744@gmail.com'
-EMAIL_HOST_PASSWORD = 'rwju gbhv srud bifo'
+EMAIL_HOST_PASSWORD = 'tttc rnro libn zlxg'
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER

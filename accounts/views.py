@@ -57,6 +57,12 @@ class MyPasswordResetView(PasswordResetView):
     template_name = 'accounts/password_reset_form.html'
     success_url = reverse_lazy('password_reset_done')
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['domain'] = 'localhost:8000'
+        context['protocol'] = 'http'
+        return context
+
 class MyPasswordResetDoneView(PasswordResetDoneView):
     template_name = 'accounts/password_reset_done.html'
 
