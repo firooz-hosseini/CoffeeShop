@@ -48,10 +48,11 @@ class CommentAdmin(admin.ModelAdmin):
     list_filter = ['is_approved', 'time']
     search_fields = ['user__first_name', 'product__title', 'text']
 
-    action = ['approve_comment']
-    
+    actions = ['approve_comments']
+
     def approve_comments(self, request, queryset):
-        queryset.update(is_approved=True)
+        updated = queryset.update(is_approved=True)
+        self.message_user(request, f"{updated} comment(s) approved.")
     approve_comments.short_description = 'Approve selected comments'
 
 

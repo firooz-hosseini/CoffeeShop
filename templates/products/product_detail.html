@@ -1,33 +1,121 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>{{ product.title }}</title>
-  <script src="https://cdn.tailwindcss.com"></script>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{{ product.title }}</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            direction: ltr;
+            padding: 20px;
+            max-width: 800px;
+            margin: auto;
+            background-color: #f9f9f9;
+        }
+        h1, h2, h3 {
+            color: #333;
+        }
+        img {
+            margin: 5px;
+            border-radius: 6px;
+            box-shadow: 0 0 8px rgba(0,0,0,0.1);
+        }
+        .comment {
+            background: #fff;
+            padding: 12px 15px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+        }
+        .comment strong {
+            color: #007bff;
+        }
+        .comment em {
+            color: #666;
+            font-size: 0.85em;
+        }
+        form {
+            background: #fff;
+            padding: 15px;
+            border-radius: 5px;
+            box-shadow: 0 1px 6px rgba(0,0,0,0.1);
+            margin-top: 15px;
+        }
+        form button {
+            background-color: #28a745;
+            color: white;
+            border: none;
+            padding: 10px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1em;
+        }
+        form button:hover {
+            background-color: #218838;
+        }
+        a.button-link {
+            display: inline-block;
+            text-decoration: none;
+            background: #007bff;
+            color: white;
+            padding: 8px 14px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        a.button-link:hover {
+            background: #0056b3;
+        }
+    </style>
 </head>
-<body class="bg-amber-100 text-gray-800 p-6 mt-[250px] ml-[680px]">
-  <div class="bg-yellow-50 rounded-lg shadow-md p-6 max-w-xl w-full">
-    <h1 class="text-3xl font-bold text-amber-900 mb-4">{{ product.title }}</h1>
-    <p class="mb-4 text-gray-700">{{ product.description }}</p>
-    <p class="mb-2"><span class="font-semibold">Price:</span> {{ product.price }} hezar toman</p>
-    <p class="mb-2"><span class="font-semibold">Category:</span> {{ product.category }}</p>
-    <p class="mb-4"><span class="font-semibold">Ingredients:</span> 
-      {% for name in product.ingredient.all %}
-        {{ name.title }},
-      {% endfor %}
+<body>
+
+    <a href="{% url 'home' %}" class="button-link">Back to Home</a>
+
+    <h1>{{ product.title }}</h1>
+    <p>{{ product.description }}</p>
+    <p><strong>Price:</strong> {{ product.price }} thousand Toman</p>
+    <p><strong>Category:</strong> {{ product.category }}</p>
+    <p><strong>Ingredients:</strong>
+        {% for name in product.ingredient.all %}
+            {{ name.title }}{% if not forloop.last %}, {% endif %}
+        {% empty %}
+            None
+        {% endfor %}
     </p>
-    <h3 class="font-semibold mb-2">Pictures:</h3>
-    <div class="flex flex-wrap gap-4 mb-6">
-      {% for image in product.image_product.all %}
-        <img src="{{ image.image.url }}" class="w-48 h-32  rounded-lg border border-gray-300" />
-      {% empty %}
-        <p>No images available.</p>
-      {% endfor %}
-    </div>
-    <a href="{% url 'home' %}" class="inline-block bg-amber-600 hover:bg-amber-700 text-white px-5 py-2 rounded">
-      Back to Home
-    </a>
-  </div>
+
+    <h3>Product Pictures:</h3>
+    {% for image in product.image_product.all %}
+        <img src="{{ image.image.url }}" alt="{{ product.title }}" width="200" />
+    {% empty %}
+        <p>No images available for this product.</p>
+    {% endfor %}
+
+    <hr />
+
+    <h2>User Comments</h2>
+
+    {% for comment in comments %}
+      <div class="comment">
+        <strong>{{ comment.user.first_name }}</strong> |
+        <em>{{ comment.time|date:"Y/m/d H:i" }}</em>
+        <p>{{ comment.text }}</p>
+      </div>
+    {% empty %}
+      <p>No comments have been posted yet.</p>
+    {% endfor %}
+
+    <hr />
+
+    {% if user.is_authenticated %}
+      <h3>Add a New Comment</h3>
+      <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Submit Comment</button>
+      </form>
+    {% else %}
+      <p>You must <a href="{% url 'login' %}">log in</a> to post a comment.</p>
+    {% endif %}
 </body>
 </html>
