@@ -8,9 +8,7 @@
 </head>
 <body class="bg-amber-100 text-gray-800">
   <div class="max-w-5xl mx-auto px-4 sm:px-6 py-12">
-
     <h1 class="text-3xl font-bold text-amber-800 mb-6 text-center">My Orders</h1>
-
     {% if messages %}
       <ul class="mb-6">
         {% for message in messages %}
@@ -90,15 +88,13 @@
     {% else %}
       <p class="text-gray-600 mt-6 text-center">You did not register any order!</p>
     {% endif %}
-
-
+      
     <div class="mt-10 text-center">
       <a href="{% url 'home' %}"
          class="inline-block bg-amber-600 hover:bg-amber-700 text-white font-medium px-6 py-2 rounded transition duration-200">
         ← Back to Home
       </a>
     </div>
-
   </div>
 </body>
 </html>
