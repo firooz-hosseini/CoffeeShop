@@ -6,28 +6,35 @@
   <title>{{ product.title }}</title>
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-amber-100 text-gray-800 p-6 mt-[250px] ml-[680px]">
-  <div class="bg-yellow-50 rounded-lg shadow-md p-6 max-w-xl w-full">
+<body class="bg-amber-100 text-gray-800 min-h-screen flex items-start justify-center py-12 px-4 sm:px-6 lg:px-8">
+
+  <div class="bg-yellow-50 rounded-lg shadow-md p-6 w-full max-w-2xl">
     <h1 class="text-3xl font-bold text-amber-900 mb-4">{{ product.title }}</h1>
+
     <p class="mb-4 text-gray-700">{{ product.description }}</p>
+
     <p class="mb-2"><span class="font-semibold">Price:</span> {{ product.price }} hezar toman</p>
     <p class="mb-2"><span class="font-semibold">Category:</span> {{ product.category }}</p>
+
     <p class="mb-4"><span class="font-semibold">Ingredients:</span> 
       {% for name in product.ingredient.all %}
-        {{ name.title }},
+        {{ name.title }}{% if not forloop.last %}, {% endif %}
       {% endfor %}
     </p>
+
     <h3 class="font-semibold mb-2">Pictures:</h3>
     <div class="flex flex-wrap gap-4 mb-6">
       {% for image in product.image_product.all %}
-        <img src="{{ image.image.url }}" class="w-48 h-32  rounded-lg border border-gray-300" />
+        <img src="{{ image.image.url }}" class="w-48 h-32 object-cover rounded-lg border border-gray-300" />
       {% empty %}
         <p>No images available.</p>
       {% endfor %}
     </div>
+
     <a href="{% url 'home' %}" class="inline-block bg-amber-600 hover:bg-amber-700 text-white px-5 py-2 rounded">
       Back to Home
     </a>
   </div>
+
 </body>
 </html>
