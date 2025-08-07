@@ -4,21 +4,125 @@
 <head>
     <meta charset="UTF-8">
     <title>Home</title>
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
-    <h1>{{ greeting }}</h1>
-    <p><a href="{% url 'product-list' %}">List of Products</a></p>
-    {% if user.is_authenticated %}
-        <p><a href="{% url 'profile' %}">My profile</a></p>
-        <form action="{% url 'logout' %}" method="post">
-  {% csrf_token %}
-  <button type="submit">
-    Logout
-  </button>
-</form>
-    {% else %}
-        <p><a href="{% url 'login' %}">Login</a></p>
-        <p><a href="{% url 'signup' %}">Signup</a></p>
-    {% endif %}
+<body class="bg-amber-100 text-gray-800">
+
+
+    <div class="max-w-6xl mx-auto px-4 py-10">
+
+
+        <div class="bg-yellow-50 rounded-lg shadow-lg p-6 mb-10 border border-stone-300">
+
+            <div class="text-center">
+                <h1 class="text-4xl font-extrabold text-amber-800 mb-6">
+                     Welcome to My Coffee Shop 
+                </h1>
+                <div class="flex flex-wrap justify-center gap-4">
+
+                        {% if user.is_authenticated %}
+                        <a href="{% url 'profile' %}" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-1 rounded">My Profile</a>
+                        <form action="{% url 'logout' %}" method="post">
+                            {% csrf_token %}
+                            <button type="submit" class="bg-red-500 hover:bg-red-600 text-white px-4 py-1 rounded">
+                                Logout
+                            </button>
+                    </form>
+                    {% else %}
+                    <a href="{% url 'login' %}" class="bg-green-500 hover:bg-green-600 text-white px-4 py-1 rounded">Login</a>
+                    <a href="{% url 'signup' %}" class="bg-green-500 hover:bg-green-600 text-white px-4 py-1 rounded">Signup</a>
+                {% endif %}
+                </div>  
+            </div>
+        </div>
+        <div class="w-44 absolute top-[283px] right-[100px]">
+            <form method="get" class="bg-yellow-50 border border-amber-300 rounded p-4 shadow max-h-[300px] overflow-y-auto">
+                <h3 class="font-semibold text-amber-900 mb-4 text-center">Filter by Category</h3>
+                <select name="category" class="w-full mb-4 border border-gray-300 rounded p-2">
+                    <option value="">All Categories</option>
+                    {% for cat in categories %}
+                        <option value="{{ cat.id }}" {% if request.GET.category == cat.id %}selected{% endif %}>
+                            {{ cat.title }}
+                        </option>
+                    {% endfor %}
+                </select>
+                <button type="submit" class="w-full bg-amber-600 hover:bg-amber-700 text-white py-1 px-3 rounded">
+                    Apply Filter
+                </button>
+            </form>
+        </div>
+
+        <h2 class="text-2xl font-bold text-amber-900 mb-6">My Products</h2>
+        <div class="grid grid-cols-3 gap-6"> 
+            {% for product in products %}
+                <div class="bg-yellow-50 rounded-xl shadow-md border border-amber-200 p-4  ">
+                    <h3 class="text-lg font-semibold text-amber-900 mb-2">{{ product.title }}</h3>
+                    <p class="text-green-500 mb-2">{{ product.price }} hezar toman</p>
+
+                    {% if product.image_product.first %}
+                        <img src="{{ product.image_product.first.image.url }}"
+                            class="w-full h-40 rounded-lg mb-2 border border-gray-200">
+                    {% endif %}
+
+                    <div class="flex flex-col space-y-2">
+                        <a href="{% url 'product-detail' product.pk %}"
+                        class="bg-amber-600 hover:bg-amber-700 text-black py-2 px-4 rounded text-center ">
+                        View Details
+                     </a>
+                     {% if product.id not in favorite_product_ids%}
+                        <a href="{% url 'add-to-favorites' product.pk %}">
+                            <button class="bg-yellow-400 hover:bg-yellow-500 text-black px-3 py-1 rounded w-full ">
+                                Add to Favorites
+                            </button>
+                        </a>
+                        {% else %}
+                        <a href="{% url 'remove-favorites' product.pk %}">
+                            <button class="bg-red-400 hover:bg-red-500 text-black px-3 py-1 rounded w-full">
+                                Remove from Favorites
+                            </button>
+                        </a>
+                        {% endif %}
+                        <form method="post" action="{% url 'create_order' product.pk %}">
+                            {% csrf_token %}
+                            <button type="submit" class="bg-green-500 hover:bg-green-600 text-black px-3 py-1 rounded w-full ">
+                                Add to Order
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            {% empty %}
+                <p class="text-gray-600 col-span-full text-center">No products available.</p>
+            {% endfor %}
+        </div>
+    </div>
+    <footer class="mt-16 bg-amber-800 text-amber-100 py-8">
+        <div class="max-w-6xl mx-auto px-4 text-sm">
+    
+            <h4 class="font-bold mb-2">Contact Us</h4>
+            <p>Phone: 09121234567</p>
+            <p>Email: coffeeshop_zagros@gmail.com</p>
+    
+            <h4 class="font-bold mt-6 mb-2">Address</h4>
+            <p>Tehran, ValiAsr St</p>
+    
+            <h4 class="font-bold mt-6 mb-2">About</h4>
+            <p>
+                At our cozy coffee shop, 
+                we serve more than just great coffee. 
+                From handcrafted espresso drinks to delicious pizzas and hearty meals,
+                 we have something for everyone. Whether you're here to relax, grab a bite,
+                  or catch up with friends, we promise a warm and welcoming atmosphere.
+            </p>
+                
+            <h4 class="font-bold mt-6 mb-2">Follow Us</h4>
+            <p>Instagram: @coffeeshop_zagros</p>
+            <p>Telegram: @coffeeshop_zagros</p>
+    
+            <div class="text-center mt-6 text-xs text-amber-200">
+               2025 My Coffee Shop. All rights reserved.
+            </div>
+        </div>
+    </footer>
+    
 </body>
 </html>

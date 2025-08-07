@@ -12,8 +12,9 @@ class Order(models.Model):
 
     user = models.ForeignKey(CustomUser,on_delete=models.CASCADE,related_name='order_user')
     time = models.DateTimeField(auto_now_add=True)
-    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
 
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
+    seen_by_admin = models.BooleanField(default=False)
     @property
     def total_price(self):
         return sum((item.product.price * item.quantity for item in self.items.all()))
@@ -69,3 +70,13 @@ class Rating(models.Model):
 
     def __str__(self):
         return f'User: {self.user.first_name}, Product: {self.product.title}, Score: {self.score}'
+    
+
+    
+class Notification(models.Model):
+    message = models.TextField()
+    is_read = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+    
+    def __str__(self):
+        return f"Notification: {self.message[:50]}"
