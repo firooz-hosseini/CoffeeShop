@@ -39,7 +39,16 @@
         <h2 class="text-xl font-semibold mb-2 border-b pb-1">🛒 Orders</h2>
         <ul class="space-y-1 pl-4 list-disc">
           {% for item in items %}
-            <li>{{ item.quantity }} × {{ item.product.title }}</li>
+            <li>{{ item.quantity }} × {{ item.product.title }}
+                    <span class="ml-2 text-sm 
+        {% if item.order.status == 'pending' %}text-yellow-600
+        {% elif item.order.status == 'delivered' %}text-green-600
+        {% elif item.order.status == 'canceled' %}text-red-600
+        {% else %}text-gray-500{% endif %}
+      ">
+        ({{ item.order.get_status_display }})
+      </span>
+            </li>
           {% empty %}
             <li class="text-gray-500">No orders found.</li>
           {% endfor %}

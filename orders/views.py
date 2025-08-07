@@ -39,8 +39,15 @@ class OrderListView(LoginRequiredMixin, ListView):
     template_name = 'order/order_list.html'
 
     def get_queryset(self):
-        return Order.objects.filter(user=self.request.user).prefetch_related('items__product__image_product')
+        return Order.objects.filter(user=self.request.user, status='pending').prefetch_related('items__product__image_product')
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        orders = context['orders']
+        context['total_all_orders'] = sum(order.total_price for order in orders)
+        return context
 
+@login_required
 def cancel_order_view(request, order_id):
     order = get_object_or_404(Order, pk=order_id, user=request.user)
 
@@ -52,6 +59,7 @@ def cancel_order_view(request, order_id):
 
     return redirect('order_list')
 
+@login_required
 def order_list(request):
     orders = Order.objects.all()
     return render(request, 'order_list.html', {'orders':orders})
