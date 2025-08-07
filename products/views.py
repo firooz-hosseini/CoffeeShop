@@ -50,20 +50,15 @@ class ProductListView(ListView):
         })
 
 
-class ProductDetailView(DetailView):
+class ProductDetailView(FormMixin, DetailView):
     model = Product
     template_name = 'products/product_detail.html'
     context_object_name = 'product'
+    form_class = CommentForm
 
-
-    class ProductDetailView(FormMixin, DetailView):
-        model = Product
-        template_name = 'product/product_detail.html'
-        context_object_name = 'product'
-        form_class = CommentForm
 
     def get_success_url(self):
-        return reverse('product_detail', kwargs={'pk': self.object.pk})
+        return reverse('product-detail', kwargs={'pk': self.object.pk})
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

@@ -4,8 +4,8 @@ from django.urls import reverse_lazy
 from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib import messages
-from .models import Order, OrderItem, Notification
-from products.models import Product, Comment
+from .models import Order, OrderItem, Notification, Comment
+from products.models import Product
 from django.views.generic import ListView
 from .forms import CreateOrderItemForm
 from django.contrib.auth.decorators import login_required
