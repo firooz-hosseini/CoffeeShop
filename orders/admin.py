@@ -44,15 +44,15 @@ class OrderItemAdmin(admin.ModelAdmin):
 
 @admin.register(Comment)
 class CommentAdmin(admin.ModelAdmin):
-    list_display = ('user', 'product', 'text', 'is_approved', 'time')
-    list_filter = ('is_approved', 'time')
-    search_fields = ('user__first_name', 'product__title', 'text')
+    list_display = ['user', 'product', 'text', 'is_approved', 'time']
+    list_filter = ['is_approved', 'time']
+    search_fields = ['user__first_name', 'product__title', 'text']
 
     action = ['approve_comment']
     
     def approve_comments(self, request, queryset):
         queryset.update(is_approved=True)
-    approve_comments.short_description = "Approve selected comments"
+    approve_comments.short_description = 'Approve selected comments'
 
 
 @admin.register(Rating)

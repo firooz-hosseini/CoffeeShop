@@ -65,3 +65,8 @@ def cancel_order_view(request, order_id):
         messages.error(request, str(e))
 
     return redirect('order_list')
+
+
+def order_list(request):
+    orders = Order.objects.all()
+    return render(request, 'order_list.html', {'orders':orders})

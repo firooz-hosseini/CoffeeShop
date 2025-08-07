@@ -5,7 +5,3 @@ class CreateOrderItemForm(forms.ModelForm):
     class Meta:
         model = OrderItem
         fields = ['quantity']
-
-
-
-
