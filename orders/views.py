@@ -8,6 +8,7 @@ from .models import Order, OrderItem, Notification
 from products.models import Product, Comment
 from django.views.generic import ListView
 from .forms import CreateOrderItemForm
+from django.contrib.auth.decorators import login_required
 
 
 class CreateOrderView(LoginRequiredMixin, View):
@@ -40,23 +41,6 @@ class OrderListView(LoginRequiredMixin, ListView):
     def get_queryset(self):
         return Order.objects.filter(user=self.request.user).prefetch_related('items__product__image_product')
 
-
-def deliver_order_view(request, order_id):
-    order = get_object_or_404(Order, pk=order_id)
-
-    if not request.user.is_staff:
-        messages.error(request, 'You do not have permission!')
-        return redirect ('order_list')
-    
-    try:
-        order.mark_as_delivered()
-        messages.success(request, 'The order was successfully delivered')
-    except ValueError as e:
-        messages.error(request, str(e))
-
-    return redirect('order_list')
-
-
 def cancel_order_view(request, order_id):
     order = get_object_or_404(Order, pk=order_id, user=request.user)
 
@@ -68,10 +52,17 @@ def cancel_order_view(request, order_id):
 
     return redirect('order_list')
 
-
 def order_list(request):
     orders = Order.objects.all()
     return render(request, 'order_list.html', {'orders':orders})
+ 
+@login_required
+def delete_order_view(request, order_id):
+    order = get_object_or_404(Order, pk=order_id, user=request.user)
+
+    if request.method == 'POST':
+        order.delete()
+        return redirect('order_list')
 
 
 class CommentCreateView(LoginRequiredMixin, CreateView):
@@ -92,3 +83,5 @@ class CommentCreateView(LoginRequiredMixin, CreateView):
 
     def get_success_url(self):
         return reverse_lazy('product_detail', kwargs={'pk': self.product.pk})
+      
+
