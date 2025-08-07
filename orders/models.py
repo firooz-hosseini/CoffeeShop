@@ -59,7 +59,7 @@ class Comment(models.Model):
 
 
 class Rating(models.Model):
-    rate = [(1, 'very bad'), (2, "bad"), (3, "normal"),(4, "good"),(5, "very good")]
+    rate = [(1, 'very bad'), (2, 'bad'), (3, 'normal'),(4, 'good'),(5, 'very good')]
     user = models.ForeignKey(CustomUser,on_delete=models.CASCADE,related_name='Rating_user')
     product = models.ForeignKey(Product,on_delete=models.CASCADE,related_name='Rating_product')
     score = models.IntegerField(choices=rate)
