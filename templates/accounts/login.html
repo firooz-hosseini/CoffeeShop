@@ -1,32 +1,39 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>Login</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-amber-100  items-center mt-[300px] ml-[730px]">
+<body class="bg-amber-100 min-h-screen flex items-center justify-center p-4">
 
-  <div class="bg-gray-200 shadow-lg rounded-lg p-8 w-full max-w-md">
-    <h1 class="text-2xl font-bold mb-6 text-center text-gray-800">Login</h1>
+  <div class="bg-gray-200 shadow-lg rounded-lg p-6 sm:p-8 w-full max-w-md">
+    <h1 class="text-xl sm:text-2xl font-bold mb-6 text-center text-gray-800">Login</h1>
 
-    <form method="post" class="space-y-4">
+    <form method="post" class="space-y-4 text-sm sm:text-base">
       {% csrf_token %}
       {{ form.as_p }}
 
       <button type="submit"
-              class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded ">
+              class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded font-semibold transition">
         Login
       </button>
     </form>
 
-    <div class="text-center mt-4">
+    <div class="text-center mt-4 space-y-2">
       <a href="{% url 'password_reset' %}"
-         class="inline-block bg-gray-200 hover:bg-gray-300 text-gray-800 px-4 py-2 rounded ">
+         class="inline-block bg-gray-300 hover:bg-gray-400 text-gray-800 px-4 py-2 rounded text-sm transition">
         Forgot your password?
       </a>
+      <a href="{% url 'home' %}"
+         class="inline-block bg-gray-400 hover:bg-gray-500 text-white px-4 py-2 rounded text-sm transition">
+        Back to Home
+      </a>
     </div>
+    
   </div>
 
 </body>
 </html>
+

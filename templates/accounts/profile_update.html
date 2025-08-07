@@ -1,13 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Edit Profile</title>
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-amber-100 min-h-screen flex items-center justify-center py-10 px-4">
+<body class="bg-amber-100 min-h-screen flex items-center justify-center px-4 py-10">
 
-  <div class="bg-gray-100 p-8 rounded-lg shadow-lg w-full max-w-md">
+  <div class="bg-gray-100 w-full max-w-md p-6 sm:p-8 rounded-lg shadow-lg">
     <h1 class="text-2xl font-bold text-center mb-6 text-gray-700">Edit Profile</h1>
 
     <form method="post" enctype="multipart/form-data" class="space-y-4">
@@ -22,7 +23,7 @@
 
     <div class="mt-6 text-center">
       <a href="{% url 'profile' %}"
-         class="bg-gray-200 hover:bg-gray-300 text-sm text-black px-3 py-1 rounded">
+         class="inline-block bg-gray-200 hover:bg-gray-300 text-sm text-black px-4 py-2 rounded">
         Back to Profile
       </a>
     </div>
