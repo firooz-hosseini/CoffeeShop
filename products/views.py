@@ -1,7 +1,14 @@
-from django.shortcuts import render , get_object_or_404 , redirect 
+from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
-from .models import *
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import ListView, DetailView
+from django.views.generic.edit import FormMixin
+from django.urls import reverse
+
+from .models import *
+from products.models import Product
+from orders.models import Comment
+from orders.forms import CommentForm
 
 
 @login_required
@@ -47,3 +54,36 @@ class ProductDetailView(DetailView):
     model = Product
     template_name = 'products/product_detail.html'
     context_object_name = 'product'
+
+
+    class ProductDetailView(FormMixin, DetailView):
+        model = Product
+        template_name = 'product/product_detail.html'
+        context_object_name = 'product'
+        form_class = CommentForm
+
+    def get_success_url(self):
+        return reverse('product_detail', kwargs={'pk': self.object.pk})
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['comments'] = self.object.Comment_product.filter(is_approved=True).order_by('-time')
+        if self.request.user.is_authenticated:
+            context['form'] = self.get_form()
+        return context
+
+    def post(self, request, *args, **kwargs):
+        self.object = self.get_object()
+
+        if not request.user.is_authenticated:
+            return redirect('login')
+
+        form = self.get_form()
+        if form.is_valid():
+            comment = form.save(commit=False)
+            comment.user = request.user
+            comment.product = self.object
+            comment.save()
+            return redirect(self.get_success_url())
+        else:
+            return self.form_invalid(form)
