@@ -1,13 +1,14 @@
-from django.shortcuts import render , get_object_or_404 , redirect 
+from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
-from .models import *
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import ListView, DetailView
 from django.views.generic.edit import FormMixin
 from django.urls import reverse
+
+from .models import *
 from products.models import Product
 from orders.models import Comment
 from orders.forms import CommentForm
-from django.contrib.auth.mixins import LoginRequiredMixin
 
 
 @login_required
