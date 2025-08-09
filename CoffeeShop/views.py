@@ -1,5 +1,8 @@
 from django.views.generic import TemplateView
-from products.models import Product,Category,Favorite
+
+from products.models import Category, Favorite, Product
+
+
 class HomePageView(TemplateView):
     template_name = 'home.html'
 

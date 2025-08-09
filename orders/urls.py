@@ -1,6 +1,7 @@
 from django.urls import path
-from .views import CreateOrderView, CommentCreateView
+
 from . import views
+from .views import CommentCreateView, CreateOrderView
 
 urlpatterns = [
   

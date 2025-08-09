@@ -1,15 +1,21 @@
-from django.shortcuts import render
-from .forms import CustomUserCreationForm
-from django.urls import reverse_lazy
-from django.views.generic.edit import CreateView
-from django.views.generic import TemplateView, UpdateView
-from django.contrib.auth.views import LoginView, PasswordChangeView, PasswordResetView, PasswordResetDoneView, PasswordResetConfirmView, PasswordResetCompleteView
-from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
-from orders.models import Order, Comment, Rating, OrderItem
+from django.contrib.auth.views import (
+    LoginView,
+    PasswordChangeView,
+    PasswordResetCompleteView,
+    PasswordResetConfirmView,
+    PasswordResetDoneView,
+    PasswordResetView,
+)
+from django.urls import reverse_lazy
+from django.views.generic import TemplateView, UpdateView
+from django.views.generic.edit import CreateView
+
+from orders.models import Comment, Order, OrderItem, Rating
 from products.models import Favorite
+
+from .forms import CustomUserCreationForm, ProfileUpdateForm
 from .models import CustomUser
-from .forms import ProfileUpdateForm
 
 
 class SignUpView(CreateView):

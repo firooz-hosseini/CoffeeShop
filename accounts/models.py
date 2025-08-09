@@ -1,26 +1,21 @@
-from django.db import models
-from django.contrib.auth.models import AbstractUser
 from django.contrib.auth.base_user import BaseUserManager
+from django.contrib.auth.models import AbstractUser
+from django.db import models
+
 
 class CustomUserManger(BaseUserManager):
 
     def create_user(self,mobile,password,**extra_field):
-
-              
         user = self.model(mobile=mobile, **extra_field)
         user.set_password(password)
         user.save()
         return user
     
     def create_superuser(self,mobile , password,  **extra_fields):
-
         extra_fields.setdefault("is_staff", True) 
         extra_fields.setdefault("is_superuser", True)
         extra_fields.setdefault("is_active", True)
         return self.create_user(mobile, password, **extra_fields) 
-    
-
-
 
 class CustomUser(AbstractUser):
     mobile = models.CharField(max_length=11,unique=True)

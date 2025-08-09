@@ -1,5 +1,6 @@
 from django.contrib import admin
-from .models import Product, Category, Ingredient, Favorite, Image
+
+from .models import Category, Favorite, Image, Ingredient, Product
 
 
 class ImageInline(admin.TabularInline):
