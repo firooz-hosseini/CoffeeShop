@@ -27,8 +27,10 @@ class CreateOrderView(LoginRequiredMixin, View):
             order = Order.objects.create(user=request.user)
             OrderItem.objects.create(order=order, product=product, quantity=quantity)
             Notification.objects.create(message=f'New order by {request.user.mobile} for {quantity} x {product.title}')
-            return redirect('order_success')
-        return render(request, 'order/create_order.html', {'product': product, 'form': form})
+            messages.success(request, f'{quantity} {product.title} is added to your order.')
+
+            return redirect('product-detail', pk=product.pk)
+        return render(request, 'product_detail.html', {'product': product, 'form': form})
 
 
 def order_success(request):

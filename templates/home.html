@@ -46,20 +46,9 @@
                         {% if product.image_product.first %}
                                 <a href="{% url 'product-detail' product.pk %}" class="block overflow-hidden rounded-lg border border-gray-200">
                                     <img src="{{ product.image_product.first.image.url }}"
-                                        class="w-full h-40 object-cover rounded-lg transition-transform duration-300 ease-in-out hover:scale-105">
+                                        class="w-full h-60 object-cover rounded-lg transition-transform duration-300 ease-in-out hover:scale-105">
                                 </a>
                             {% endif %}
-                        
-                        
-
-                        <div class="flex flex-col space-y-2 mt-auto">
-                            <form method="post" action="{% url 'create_order' product.pk %}">
-                                {% csrf_token %}
-                                <button type="submit" class="bg-green-500 hover:bg-green-600 text-black px-3 py-1 rounded w-full">
-                                    Add to Order
-                                </button>
-                            </form>
-                        </div>
                     </div>
                 {% empty %}
                     <p class="text-gray-600 col-span-full text-center">No products available.</p>
