@@ -11,4 +11,6 @@ urlpatterns = [
     path('comment/add/<int:product_id>/', CommentCreateView.as_view(), name='add_comment'),
     path('cancel/<int:order_id>/', views.cancel_order_view, name='cancel_order'),
     path('delete/<int:order_id>/', views.delete_order_view, name='delete_order'),
+    path('rate/<int:product_id>/', views.RateProductView.as_view(), name='rate_product'),
+
 ]

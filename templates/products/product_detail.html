@@ -93,6 +93,41 @@
       {% endif %}
     </div>
 
+    <!-- Average Rating -->
+    <div class="mb-4">
+      <span class="font-semibold">Average Rating:</span>
+      {% with avg=product.average_rating %}
+        {% if avg %}
+          {{ avg|floatformat:1 }} / 5 ★
+        {% else %}
+          No ratings yet.
+        {% endif %}
+      {% endwith %}
+    </div>
+
+    <!-- Rating Form -->
+    {% if user.is_authenticated %}
+      <form action="{% url 'rate_product' product.pk %}" method="post" class="mb-6">
+        {% csrf_token %}
+        <label for="score" class="font-semibold">Your Rating:</label>
+        <select name="score" id="score" class="border rounded px-2 py-1">
+          <option value="">-- Select --</option>
+          {% for num in "12345" %}
+            <option value="{{ num }}">{{ num }}</option>
+          {% endfor %}
+        </select>
+        <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-1 rounded">
+          Rate
+        </button>
+      </form>
+    {% else %}
+      <p class="text-gray-700">
+        <a href="{% url 'login' %}" class="text-blue-600 hover:underline">Log in</a> to rate this product.
+      </p>
+    {% endif %}
+
+
+
     <div class="mb-6 mt-10">
       <h3 class="text-xl font-bold text-gray-800 mb-4">User Comments</h3>
       {% for comment in comments %}
