@@ -42,7 +42,7 @@
                 {% for product in products %}
                     <div class="bg-yellow-50 rounded-xl shadow-md border border-amber-200 p-4">
                         <h3 class="text-lg font-semibold text-amber-900 mb-2">{{ product.title }}</h3>
-                        <p class="text-green-500 mb-2">{{ product.price }} hezar toman</p>
+                        <p class="text-green-500 mb-2">{{ product.price }},000 Toman</p>
 
                         {% if product.image_product.first %}
                             <img src="{{ product.image_product.first.image.url }}"

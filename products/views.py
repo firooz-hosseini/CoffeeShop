@@ -16,7 +16,7 @@ from .models import *
 def add_to_favorites(request,product_id):
     product = get_object_or_404(Product,id = product_id)
     Favorite.objects.create(user = request.user,product = product)
-    return redirect('home')
+    return redirect('product-detail', pk=product.pk)
    
 @login_required
 def user_favorites(request):
@@ -27,7 +27,7 @@ def user_favorites(request):
 def remove_from_favorites(request, pk):
     product = get_object_or_404(Product, pk=pk)
     Favorite.objects.filter(user=request.user, product=product).delete()
-    return redirect('home')
+    return redirect('product-detail', pk=product.pk)
 
 class ProductListView(ListView):
     model = Product
@@ -64,8 +64,15 @@ class ProductDetailView(FormMixin, DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['comments'] = self.object.Comment_product.filter(is_approved=True).order_by('-time')
+        
         if self.request.user.is_authenticated:
             context['form'] = self.get_form()
+            context['is_favorite'] = Favorite.objects.filter(
+                user=self.request.user, product=self.object
+            ).exists()
+        else:
+            context['is_favorite'] = False
+
         return context
 
     def post(self, request, *args, **kwargs):

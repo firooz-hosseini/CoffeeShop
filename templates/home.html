@@ -41,40 +41,14 @@
                 {% for product in products %}
                     <div class="bg-yellow-50 rounded-xl shadow-md border border-amber-200 p-4 flex flex-col">
                         <h3 class="text-lg font-semibold text-amber-900 mb-2">{{ product.title }}</h3>
-                        <p class="text-green-500 mb-2">{{ product.price }} hezar toman</p>
+                        <p class="text-green-500 mb-2">{{ product.price }},000 Toman</p>
 
                         {% if product.image_product.first %}
-                            <img src="{{ product.image_product.first.image.url }}"
-                                 class="w-full h-40 object-cover rounded-lg mb-2 border border-gray-200">
-                        {% endif %}
-
-                        <div class="flex flex-col space-y-2 mt-auto">
-                            <a href="{% url 'product-detail' product.pk %}"
-                               class="bg-amber-600 hover:bg-amber-700 text-black py-2 px-4 rounded text-center">
-                                View Details
-                            </a>
-
-                            {% if product.id not in favorite_product_ids %}
-                                <a href="{% url 'add-to-favorites' product.pk %}">
-                                    <button class="bg-yellow-400 hover:bg-yellow-500 text-black px-3 py-1 rounded w-full">
-                                        Add to Favorites
-                                    </button>
-                                </a>
-                            {% else %}
-                                <a href="{% url 'remove-favorites' product.pk %}">
-                                    <button class="bg-red-400 hover:bg-red-500 text-black px-3 py-1 rounded w-full">
-                                        Remove from Favorites
-                                    </button>
+                                <a href="{% url 'product-detail' product.pk %}" class="block overflow-hidden rounded-lg border border-gray-200">
+                                    <img src="{{ product.image_product.first.image.url }}"
+                                        class="w-full h-60 object-cover rounded-lg transition-transform duration-300 ease-in-out hover:scale-105">
                                 </a>
                             {% endif %}
-
-                            <form method="post" action="{% url 'create_order' product.pk %}">
-                                {% csrf_token %}
-                                <button type="submit" class="bg-green-500 hover:bg-green-600 text-black px-3 py-1 rounded w-full">
-                                    Add to Order
-                                </button>
-                            </form>
-                        </div>
                     </div>
                 {% empty %}
                     <p class="text-gray-600 col-span-full text-center">No products available.</p>
