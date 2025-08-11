@@ -17,7 +17,7 @@
     <p class="mb-4 text-gray-700">{{ product.description }}</p>
 
 
-    <p class="mb-2"><span class="font-semibold">Price:</span> {{ product.price }} hezar toman</p>
+    <p class="mb-2"><span class="font-semibold">Price:</span> {{ product.price }},000 Toman</p>
     <p class="mb-2"><span class="font-semibold">Category:</span> {{ product.category }}</p>
 
 
@@ -39,6 +39,24 @@
         <p class="text-gray-500">No images available.</p>
       {% endfor %}
     </div>
+
+      {% if user.is_authenticated %}
+          {% if is_favorite %}
+            <a href="{% url 'remove-favorites' product.pk %}" 
+              class="inline-flex items-center bg-red-400 hover:bg-red-500 text-black px-4 py-2 rounded transition duration-200 mb-4">
+              Remove from Favorites
+            </a>
+          {% else %}
+            <a href="{% url 'add-to-favorites' product.pk %}" 
+              class="inline-flex items-center bg-yellow-400 hover:bg-yellow-500 text-black px-4 py-2 rounded transition duration-200 mb-4">
+              Add to Favorites
+            </a>
+          {% endif %}
+      {% else %}
+          <p class="text-gray-700">
+            <a href="{% url 'login' %}" class="text-blue-600 hover:underline">Log in</a> to add this product to favorites.
+          </p>
+      {% endif %}
 
 
     <div class="mb-6">
