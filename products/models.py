@@ -10,7 +10,8 @@ class Product(models.Model):
     category = models.ForeignKey('Category',on_delete=models.CASCADE,related_name='product_category')
     price = models.PositiveIntegerField()
     quantity = models.PositiveIntegerField()
-
+    def is_available(self):
+        return self.quantity > 0
     def __str__(self):
         return self.title
 
