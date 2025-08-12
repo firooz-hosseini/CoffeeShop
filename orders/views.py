@@ -16,16 +16,32 @@ from .models import Comment, Notification, Order, OrderItem
 class CreateOrderView(LoginRequiredMixin, View):
     def get(self, request, product_id):
         product = get_object_or_404(Product, id=product_id)
+        if product.quantity <= 0:
+            messages.error(request,'This product is out of stock.')
+            return redirect('product-detail',pk=product.pk)
+        
         form = CreateOrderItemForm()
         return render(request, 'order/create_order.html', {'product': product, 'form': form})
 
     def post(self, request, product_id):
         product = get_object_or_404(Product, id=product_id)
+        if product.quantity <= 0:
+            messages.error(request, "This product is out of stock.")
+            return redirect('product-detail', pk=product.pk)
+
         form = CreateOrderItemForm(request.POST)
         if form.is_valid():
             quantity = form.cleaned_data['quantity']
+            if quantity > product.quantity:
+                messages.error(request, f"Only {product.quantity} items are available.")
+                return redirect('product-detail', pk=product.pk)
+
             order = Order.objects.create(user=request.user)
             OrderItem.objects.create(order=order, product=product, quantity=quantity)
+
+            product.quantity -= quantity
+            product.save()
+            
             Notification.objects.create(message=f'New order by {request.user.mobile} for {quantity} x {product.title}')
             messages.success(request, f'{quantity} {product.title} is added to your order.')
 
