@@ -12,6 +12,11 @@ class CustomUserAdmin(UserAdmin):
     list_filter = ['is_staff', 'is_active']
     search_fields = ['mobile']
     ordering = ['-id']
+
+    fieldsets = (
+        (None, {'fields': ('mobile', 'password', 'profile_picture')}),
+        ('Permissions', {'fields': ('is_staff', 'is_active', 'is_superuser', 'groups', 'user_permissions')}),
+    )
     
     add_fieldsets = (
         (None, {

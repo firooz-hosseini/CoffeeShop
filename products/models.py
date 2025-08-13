@@ -1,4 +1,5 @@
 from django.db import models
+from django.db.models import Avg
 
 from accounts.models import CustomUser
 
@@ -10,6 +11,10 @@ class Product(models.Model):
     category = models.ForeignKey('Category',on_delete=models.CASCADE,related_name='product_category')
     price = models.PositiveIntegerField()
     quantity = models.PositiveIntegerField()
+
+    def average_rating(self):
+        return self.Rating_product.aggregate(avg=Avg('score'))['avg'] or 0
+
     def is_available(self):
         return self.quantity > 0
     def __str__(self):

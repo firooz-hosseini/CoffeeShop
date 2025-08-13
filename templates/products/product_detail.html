@@ -40,12 +40,13 @@
         None
       {% endfor %}
     </p>
+    <p class="mb-2"><span class="font-semibold">Quantity in stock:</span> {{ product.quantity }}</p>
 
     <h3 class="font-semibold mb-2">Pictures:</h3>
     <div class="flex flex-wrap gap-4 mb-6">
       {% for image in product.image_product.all %}
         <img src="{{ image.image.url }}" alt="{{ product.title }}"
-             class="w-48 h-32 object-cover rounded-lg border border-gray-300 transition-transform duration-300 ease-in-out hover:scale-105" />
+             class="w-48 h-40 object-cover rounded-lg border border-gray-300 transition-transform duration-300 ease-in-out hover:scale-105" />
       {% empty %}
         <p class="text-gray-500">No images available.</p>
       {% endfor %}
@@ -97,7 +98,40 @@
       {% endif %}
     </div>
 
-    <div class="mb-6 mt-10">
+    <div class="mb-4 mt-4">
+      <span class="font-semibold">Average Rating:</span>
+      {% with avg=product.average_rating %}
+        {% if avg %}
+          {{ avg|floatformat:1 }} / 5 ⭐
+        {% else %}
+          No ratings yet.
+        {% endif %}
+      {% endwith %}
+    </div>
+
+    {% if user.is_authenticated %}
+      <form action="{% url 'rate_product' product.pk %}" method="post" class="mb-4">
+        {% csrf_token %}
+        <label for="score" class="font-semibold">Your Rating:</label>
+        <select name="score" id="score" class="border rounded px-2 py-1">
+          <option value="">-- Select --</option>
+          {% for num in "12345" %}
+            <option value="{{ num }}">{{ num }}</option>
+          {% endfor %}
+        </select>
+        <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-1 rounded">
+          Rate
+        </button>
+      </form>
+    {% else %}
+      <p class="text-gray-700">
+        <a href="{% url 'login' %}" class="text-blue-600 hover:underline">Log in</a> to rate this product.
+      </p>
+    {% endif %}
+
+
+
+    <div class="mb-6 mt-4">
       <h3 class="text-xl font-bold text-gray-800 mb-4">User Comments</h3>
       {% for comment in comments %}
         <div class="bg-white border border-gray-300 rounded-lg p-4 mb-3">
@@ -130,9 +164,13 @@
       </p>
     {% endif %}
 
-    <a href="{% url 'home' %}" class="inline-block bg-amber-600 hover:bg-amber-700 text-white px-5 py-2 rounded font-semibold transition">
-      ← Back to Home
-    </a>
+    <div class="mt-6 flex justify-center">
+      <a href="{% url 'home' %}" 
+        class="bg-amber-600 hover:bg-amber-700 text-white px-5 py-2 rounded font-semibold transition">
+        ← Back to Home
+      </a>
+    </div>
+    
   </div>
 
 </body>
