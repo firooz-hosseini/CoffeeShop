@@ -119,7 +119,7 @@ def pay_order_views(request, order_id):
     order.save()
 
     messages.success(request, 'Payment successfully paid!')
-    return redirect('order_success')
+    return redirect('order_list')
   
 
 class RateProductView(LoginRequiredMixin, View):
