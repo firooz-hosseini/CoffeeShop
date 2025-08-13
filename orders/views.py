@@ -10,7 +10,7 @@ from django.views.generic.edit import CreateView
 from products.models import Product
 
 from .forms import CreateOrderItemForm
-from .models import Comment, Notification, Order, OrderItem
+from .models import Comment, Notification, Order, OrderItem, Rating
 
 
 class CreateOrderView(LoginRequiredMixin, View):
@@ -111,3 +111,32 @@ class CommentCreateView(LoginRequiredMixin, CreateView):
 
     def get_success_url(self):
         return reverse_lazy('product_detail', kwargs={'pk': self.product.pk})
+      
+
+class RateProductView(LoginRequiredMixin, View):
+    def post(self, request, product_id):
+        product = get_object_or_404(Product, pk=product_id)
+        score = request.POST.get('score')
+
+        try:
+            score = int(score)
+        except (TypeError, ValueError):
+            messages.error(request, "Invalid score.")
+            return redirect('product-detail', pk=product.pk)
+
+        if score < 1 or score > 5:
+            messages.error(request, "Invalid score.")
+            return redirect('product-detail', pk=product.pk)
+
+        rating, created = Rating.objects.update_or_create(
+            user=request.user,
+            product=product,
+            defaults={'score': score}
+        )
+
+        if created:
+            messages.success(request, f"You rated {product.title} with {score} stars.")
+        else:
+            messages.success(request, f"Your rating for {product.title} has been updated to {score} stars.")
+
+        return redirect('product-detail', pk=product.pk)
