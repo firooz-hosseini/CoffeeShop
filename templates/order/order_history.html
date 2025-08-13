@@ -1,0 +1,71 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Order History</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-amber-100 text-gray-800">
+
+<div class="max-w-6xl mx-auto px-4 py-10">
+
+    <h1 class="text-3xl font-bold text-amber-900 mb-6 text-center">Your Order History</h1>
+
+    <form method="get" class="bg-yellow-50 border border-amber-300 rounded p-4 shadow mb-6 flex flex-wrap gap-4 justify-center">
+        <div>
+            <label class="block font-semibold text-amber-900 mb-1">Start Date:</label>
+            <input type="date" name="start_date" value="{{ start_date }}" class="border border-gray-300 rounded p-2">
+        </div>
+        <div>
+            <label class="block font-semibold text-amber-900 mb-1">End Date:</label>
+            <input type="date" name="end_date" value="{{ end_date }}" class="border border-gray-300 rounded p-2">
+        </div>
+        <div class="flex items-end">
+            <button type="submit" class="bg-amber-600 hover:bg-amber-700 text-white px-4 py-2 rounded font-medium transition-colors duration-300">
+                Apply Filter
+            </button>
+        </div>
+    </form>
+
+    {% if orders %}
+        <div class="overflow-x-auto">
+            <table class="min-w-full bg-yellow-50 border border-amber-300 rounded shadow">
+                <thead class="bg-amber-600 text-white">
+                    <tr>
+                        <th class="py-2 px-4 border">#</th>
+                        <th class="py-2 px-4 border">Product</th>
+                        <th class="py-2 px-4 border">Quantity</th>
+                        <th class="py-2 px-4 border">Price</th>
+                        <th class="py-2 px-4 border">Date</th>
+                        <th class="py-2 px-4 border">Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for order in orders %}
+                    <tr class="text-center border-t">
+                        <td class="py-2 px-4 border">{{ forloop.counter }}</td>
+                        <td class="py-2 px-4 border">{{ order.product.title }}</td>
+                        <td class="py-2 px-4 border">{{ order.quantity }}</td>
+                        <td class="py-2 px-4 border">{{ order.price }},000 Toman</td>
+                        <td class="py-2 px-4 border">{{ order.created_at|date:"Y-m-d H:i" }}</td>
+                        <td class="py-2 px-4 border">{{ order.status }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <p class="text-center text-gray-600 mt-6">You have no orders yet.</p>
+    {% endif %}
+
+    <div class="text-center mt-6">
+        <a href="{% url 'home' %}" class="bg-blue-500 hover:bg-blue-600 text-white px-6 py-2 rounded font-medium transition-colors duration-300">
+            Back to Home
+        </a>
+    </div>
+</div>
+
+</body>
+</html>
