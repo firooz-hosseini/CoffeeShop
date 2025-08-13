@@ -6,6 +6,7 @@ from django.urls import reverse_lazy
 from django.views import View
 from django.views.generic import ListView
 from django.views.generic.edit import CreateView
+from django.utils.dateparse import parse_date
 
 from products.models import Product
 
@@ -141,7 +142,25 @@ def pay_order_views(request):
         return redirect('order_pay')
     
     total_price_all = sum(order.total_price for order in orders)
-    return render(request, 'order/payment.html', {
+    return render(request, 'order/payment.html', {'orders': orders,'total_price_all': total_price_all})
+
+
+@login_required
+def order_history(request):
+    user = request.user
+    orders = Order.objects.filter(user=user).order_by('-time')
+
+    start_date = request.GET.get('start_date')
+    end_date = request.GET.get('end_date')
+    
+    if start_date:
+        orders = orders.filter(time__date__gte=parse_date(start_date))
+    if end_date:
+        orders = orders.filter(time__date__lte=parse_date(end_date))
+
+    context = {
         'orders': orders,
-        'total_price_all': total_price_all
-    })
+        'start_date': start_date or '',
+        'end_date': end_date or ''
+    }
+    return render(request, 'order/order_history.html', context)
