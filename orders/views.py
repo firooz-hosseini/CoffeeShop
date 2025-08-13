@@ -92,7 +92,7 @@ def delete_order_view(request, order_id):
 class CommentCreateView(LoginRequiredMixin, CreateView):
     model = Comment
     fields = ['text']
-    template_name = 'order/comment_form.html'
+    template_name = 'products/product_detail.html'
 
     def dispatch(self, request, *args, **kwargs):
         self.product = get_object_or_404(Product, pk=kwargs['product_id'])
@@ -118,7 +118,7 @@ def pay_order_views(request, order_id):
     order.status = 'paid'
     order.save()
 
-    messages.success(request, 'Payment successfully paid!')
+    messages.success(request, 'Successfully paid!')
     return redirect('order_list')
   
 
