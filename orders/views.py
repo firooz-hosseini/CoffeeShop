@@ -137,4 +137,4 @@ def pay_order_views(request):
         return redirect('order_success')
     
     total_price_all = sum(order.total_price for order in orders)
-    return render(request, 'payment.html', {'orders': orders, 'total_price_all': total_price_all})
+    return render(request, 'order/payment.html', {'orders': orders, 'total_price_all': total_price_all})
