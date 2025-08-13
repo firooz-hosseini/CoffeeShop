@@ -40,6 +40,7 @@
         None
       {% endfor %}
     </p>
+    <p class="mb-2"><span class="font-semibold">Quantity in stock:</span> {{ product.quantity }}</p>
 
     <h3 class="font-semibold mb-2">Pictures:</h3>
     <div class="flex flex-wrap gap-4 mb-6">
@@ -52,6 +53,7 @@
     </div>
 
     <div class="mb-6">
+    {% if product.quantity > 0 %}
       <form method="post" action="{% url 'create_order' product.pk %}" class="flex items-center gap-4 max-w-xs">
         {% csrf_token %}
         <label for="quantity" class="sr-only">Quantity</label>
@@ -61,7 +63,7 @@
           name="quantity" 
           value="1" 
           min="1" 
-          max="100" 
+          max="100"
           class="w-20 border border-gray-300 rounded px-3 py-2 text-center focus:outline-none focus:ring-2 focus:ring-amber-500"
           required
         />
@@ -70,6 +72,9 @@
           Add to Cart
         </button>
       </form>
+      {% else %}
+      <span class="inline-block bg-red-500 text-white px-4 py-2 rounded">Out of Stock</span>
+    {% endif %}
     </div>
 
 

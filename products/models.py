@@ -15,8 +15,8 @@ class Product(models.Model):
     def average_rating(self):
         return self.Rating_product.aggregate(avg=Avg('score'))['avg'] or 0
 
-
-
+    def is_available(self):
+        return self.quantity > 0
     def __str__(self):
         return self.title
 
