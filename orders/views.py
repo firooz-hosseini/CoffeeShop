@@ -91,6 +91,14 @@ def delete_order_view(request, order_id):
     if request.method == 'POST':
         order.delete()
         return redirect('order_list')
+    
+
+@login_required
+def mark_as_paid(self):
+        if self.status != 'pending':
+            raise ValueError('Only pending orders can be marked as paid.')
+        self.status = 'paid'
+        self.save()
 
 
 class CommentCreateView(LoginRequiredMixin, CreateView):
@@ -114,15 +122,19 @@ class CommentCreateView(LoginRequiredMixin, CreateView):
     
 
 @login_required
-def pay_order_views(request, order_id):
-    order = get_object_or_404(Order, pk=order_id, user=request.user)
+def pay_order_views(request):
+    orders = Order.objects.filter(user=request.user, status='pending')
 
-    if order.status != 'pending':
-        messages.error(request, 'This order can not be paid!')
-        return redirect('order_list')
+    if not orders.exists():
+        messages.error(request, 'There is no order to pay!')
+        return redirect(request, 'order_list.html')
     
-    order.status = 'paid'
-    order.save()
+    if request.method == 'POST':
+        for order in orders:
+            order.mark_as_paid()
 
-    messages.success(request, 'Payment successfully paid!')
-    return redirect('order_success')
+        messages.success(request, 'The payment was successfully made.')
+        return redirect('order_success')
+    
+    total_price_all = sum(order.total_price for order in orders)
+    return render(request, 'payment.html', {'orders': orders, 'total_price_all': total_price_all})

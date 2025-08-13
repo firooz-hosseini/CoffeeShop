@@ -93,6 +93,16 @@
       <p class="mt-10 text-lg font-bold text-right text-amber-800">
         Total of All Orders: <span class="text-green-700">{{ total_all_orders }},000 Toman</span>
       </p>
+
+      {% if total_all_orders > 0 %}
+        <div class="mt-6 text-right">
+          <a href="{% url 'pay_all_orders' %}"
+             class="inline-block bg-green-600 hover:bg-green-700 text-white font-medium px-6 py-2 rounded">
+            Pay all items
+          </a>
+        </div>
+      {% endif %}
+
     {% else %}
       <p class="text-gray-600 mt-6 text-center">You have not placed any orders yet.</p>
     {% endif %}
