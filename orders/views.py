@@ -106,7 +106,21 @@ class CommentCreateView(LoginRequiredMixin, CreateView):
 
     def get_success_url(self):
         return reverse_lazy('product_detail', kwargs={'pk': self.product.pk})
-      
+
+@login_required
+def pay_order_views(request, order_id):
+    order = get_object_or_404(Order, pk=order_id, user=request.user)
+
+    if order.status != 'pending':
+        messages.error(request, 'This order can not be paid!')
+        return redirect('order_list')
+    
+    order.status = 'paid'
+    order.save()
+
+    messages.success(request, 'Payment successfully paid!')
+    return redirect('order_success')
+  
 
 class RateProductView(LoginRequiredMixin, View):
     def post(self, request, product_id):
