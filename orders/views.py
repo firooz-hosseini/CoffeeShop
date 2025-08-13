@@ -49,10 +49,6 @@ class CreateOrderView(LoginRequiredMixin, View):
         return render(request, 'product_detail.html', {'product': product, 'form': form})
 
 
-def order_success(request):
-    return render(request, 'order/order_success.html')
-
-
 class OrderListView(LoginRequiredMixin, ListView):
     model = Order
     context_object_name = 'orders'
