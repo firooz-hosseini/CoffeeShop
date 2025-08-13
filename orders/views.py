@@ -101,8 +101,7 @@ class CommentCreateView(LoginRequiredMixin, CreateView):
     def form_valid(self, form):
         form.instance.user = self.request.user
         form.instance.product = self.product
-        if not form.instance.purchased_before:
-            return self.handle_no_permission()
+        messages.success(self.request, "Your comment has been sent successfully. It will be shown after admin confirmation")
         return super().form_valid(form)
 
     def get_success_url(self):

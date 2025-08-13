@@ -17,6 +17,7 @@ class Product(models.Model):
 
     def is_available(self):
         return self.quantity > 0
+    
     def __str__(self):
         return self.title
 

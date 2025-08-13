@@ -140,11 +140,19 @@
             <span class="text-sm text-gray-500">{{ comment.time|date:"Y/m/d H:i" }}</span>
           </div>
           <p class="text-gray-700">{{ comment.text }}</p>
+          <p class="text-sm mt-1">
+            {% if comment.purchased_before %}
+              <span class="text-green-600 font-semibold">(Purchased)</span>
+            {% else %}
+              <span class="text-gray-500">(Not purchased)</span>
+            {% endif %}
+          </p>
         </div>
       {% empty %}
         <p class="text-gray-600">No comments yet.</p>
       {% endfor %}
     </div>
+
 
     {% if user.is_authenticated %}
       <div class="mb-6">
