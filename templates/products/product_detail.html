@@ -45,7 +45,7 @@
     <div class="flex flex-wrap gap-4 mb-6">
       {% for image in product.image_product.all %}
         <img src="{{ image.image.url }}" alt="{{ product.title }}"
-             class="w-48 h-32 object-cover rounded-lg border border-gray-300 transition-transform duration-300 ease-in-out hover:scale-105" />
+             class="w-48 h-40 object-cover rounded-lg border border-gray-300 transition-transform duration-300 ease-in-out hover:scale-105" />
       {% empty %}
         <p class="text-gray-500">No images available.</p>
       {% endfor %}
