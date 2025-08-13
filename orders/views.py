@@ -111,5 +111,3 @@ class CommentCreateView(LoginRequiredMixin, CreateView):
 
     def get_success_url(self):
         return reverse_lazy('product_detail', kwargs={'pk': self.product.pk})
-      
-
