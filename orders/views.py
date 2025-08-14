@@ -125,19 +125,21 @@ def pay_order_views(request):
 
     if request.method == 'POST':
         for order in orders:
-            order = Order.objects.get(pk=1)
             try:
                 mark_as_paid(order)
-                print('The pay successfully made!')
             except ValueError as e:
-                print(f"error: {e}")
-        messages.success(request, 'The pay successfully made!')
-        return redirect('order_pay')
-    
+                messages.error(request, str(e))
+                return redirect('order_list')
+
+        messages.success(request, 'The payment was successfully made!')
+        return redirect('order_list')
+
     total_price_all = sum(order.total_price for order in orders)
     return render(request, 'order/payment.html', {
         'orders': orders,
-        'total_price_all': total_price_all})
+        'total_price_all': total_price_all
+    })
+
         
 
 class RateProductView(LoginRequiredMixin, View):
