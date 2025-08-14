@@ -137,8 +137,8 @@ def pay_order_views(request):
     total_price_all = sum(order.total_price for order in orders)
     return render(request, 'order/payment.html', {
         'orders': orders,
-        'total_price_all': total_price_all
-
+        'total_price_all': total_price_all})
+        
 
 class RateProductView(LoginRequiredMixin, View):
     def post(self, request, product_id):
