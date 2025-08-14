@@ -46,7 +46,7 @@
               {% for item in order.items.all %}
                 <li class="flex flex-col sm:flex-row items-center gap-4 bg-yellow-50 p-4 rounded border border-yellow-100">
                   <div class="w-full sm:w-24 h-24 flex-shrink-0">
-                    {% with item.product.image_product.first as image %}
+                    {% with item.product.image_product.all|first as image %}
                       {% if image %}
                         <img src="{{ image.image.url }}" alt="{{ item.product.title }}"
                              class="w-full h-full object-cover rounded border">
@@ -72,11 +72,6 @@
 
             {% if order.status == 'pending' and user == order.user %}
               <div class="mt-6 flex gap-4">
-                <a href="{% url 'order_pay' order.id %}"
-                   class="w-full sm:w-auto bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 text-center">
-                  Pay
-                </a>
-
                 <form method="post" action="{% url 'cancel_order' order.id %}">
                   {% csrf_token %}
                   <button type="submit"
@@ -91,8 +86,17 @@
       </div>
 
       <p class="mt-10 text-lg font-bold text-right text-amber-800">
-        Total of All Orders: <span class="text-green-700">{{ total_all_orders }},000 Toman</span>
+        Total Of All Orders: <span class="text-green-700">{{ total_all_orders }},000 Toman</span>
       </p>
+
+      {% if total_all_orders > 0 %}
+        <div class="mt-6 text-right">
+          <a href="{% url 'order_pay'%}"
+             class="inline-block bg-green-600 hover:bg-green-700 text-white font-medium px-6 py-2 rounded">
+            Pay
+          </a>
+        </div>
+      {% endif %}
     {% else %}
       <p class="text-gray-600 mt-6 text-center">You have not placed any orders yet.</p>
     {% endif %}
