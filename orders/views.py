@@ -100,7 +100,7 @@ def mark_as_paid(order):
 class CommentCreateView(LoginRequiredMixin, CreateView):
     model = Comment
     fields = ['text']
-    template_name = 'order/comment_form.html'
+    template_name = 'products/product_detail.html'
 
     def dispatch(self, request, *args, **kwargs):
         self.product = get_object_or_404(Product, pk=kwargs['product_id'])
@@ -122,7 +122,7 @@ def pay_order_views(request):
     if not orders.exists():
         messages.error(request, 'There is no order to pay!')
         return redirect('order_list')
-
+      
     if request.method == 'POST':
         for order in orders:
             try:
@@ -140,7 +140,6 @@ def pay_order_views(request):
         'total_price_all': total_price_all
     })
 
-        
 
 class RateProductView(LoginRequiredMixin, View):
     def post(self, request, product_id):

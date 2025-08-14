@@ -1,3 +1,4 @@
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import get_object_or_404, redirect, render
@@ -16,6 +17,7 @@ from .models import *
 def add_to_favorites(request,product_id):
     product = get_object_or_404(Product,id = product_id)
     Favorite.objects.create(user = request.user,product = product)
+    messages.success(request, f'{product.title} is added to your favorite.')
     return redirect('product-detail', pk=product.pk)
    
 @login_required
@@ -27,6 +29,7 @@ def user_favorites(request):
 def remove_from_favorites(request, pk):
     product = get_object_or_404(Product, pk=pk)
     Favorite.objects.filter(user=request.user, product=product).delete()
+    messages.success(request, f'{product.title} is removed from your favorite.')
     return redirect('product-detail', pk=product.pk)
 
 class ProductListView(ListView):
