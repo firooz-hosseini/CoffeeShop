@@ -10,7 +10,7 @@ from django.views.generic.edit import CreateView
 from products.models import Product
 
 from .forms import CreateOrderItemForm
-from .models import Comment, Notification, Order, OrderItem
+from .models import Comment, Notification, Order, OrderItem, Rating
 
 
 class CreateOrderView(LoginRequiredMixin, View):
@@ -47,10 +47,6 @@ class CreateOrderView(LoginRequiredMixin, View):
 
             return redirect('product-detail', pk=product.pk)
         return render(request, 'product_detail.html', {'product': product, 'form': form})
-
-
-def order_success(request):
-    return render(request, 'order/order_success.html')
 
 
 class OrderListView(LoginRequiredMixin, ListView):
@@ -113,13 +109,11 @@ class CommentCreateView(LoginRequiredMixin, CreateView):
     def form_valid(self, form):
         form.instance.user = self.request.user
         form.instance.product = self.product
-        if not form.instance.purchased_before:
-            return self.handle_no_permission()
+        messages.success(self.request, "Your comment has been sent successfully. It will be shown after admin confirmation")
         return super().form_valid(form)
 
     def get_success_url(self):
         return reverse_lazy('product_detail', kwargs={'pk': self.product.pk})
-    
 
 @login_required
 def pay_order_views(request):
@@ -144,4 +138,32 @@ def pay_order_views(request):
     return render(request, 'order/payment.html', {
         'orders': orders,
         'total_price_all': total_price_all
-    })
+
+
+class RateProductView(LoginRequiredMixin, View):
+    def post(self, request, product_id):
+        product = get_object_or_404(Product, pk=product_id)
+        score = request.POST.get('score')
+
+        try:
+            score = int(score)
+        except (TypeError, ValueError):
+            messages.error(request, "Invalid score.")
+            return redirect('product-detail', pk=product.pk)
+
+        if score < 1 or score > 5:
+            messages.error(request, "Invalid score.")
+            return redirect('product-detail', pk=product.pk)
+
+        rating, created = Rating.objects.update_or_create(
+            user=request.user,
+            product=product,
+            defaults={'score': score}
+        )
+
+        if created:
+            messages.success(request, f"You rated {product.title} with {score} stars.")
+        else:
+            messages.success(request, f"Your rating for {product.title} has been updated to {score} stars.")
+
+        return redirect('product-detail', pk=product.pk)

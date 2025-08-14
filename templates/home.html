@@ -42,16 +42,21 @@
                     <a href="{% url 'product-detail' product.pk %}" 
                     class="bg-yellow-50 rounded-xl shadow-md border border-amber-200 p-4 flex flex-col hover:shadow-lg transition-shadow duration-300">
                         <h3 class="text-lg font-semibold text-amber-900 mb-2">{{ product.title }}</h3>
-                        <p class="text-green-500 mb-2">{{ product.price }},000 Toman</p>
-
+                        
                         {% if product.image_product.first %}
                             <img src="{{ product.image_product.first.image.url }}"
                                 alt="{{ product.title }}"
                                 class="w-full h-60 object-cover rounded-lg transition-transform duration-300 ease-in-out hover:scale-105">
                         {% endif %}
+                        <p class="mt-2 text-sm text-gray-600 mb-2">
+                        ⭐ {{ product.average_rating|floatformat:1 }}/5
+                        <p class="text-green-500">{{ product.price }},000 Toman</p>
+                        </p>
                     </a>
+                    
                 {% empty %}
                     <p class="text-gray-600 col-span-full text-center">No products available.</p>
+                    
                 {% endfor %}
 
             </div>
@@ -79,30 +84,24 @@
 </div>
 
 <footer class="mt-16 bg-amber-800 text-amber-100 py-8">
-    <div class="max-w-6xl mx-auto px-4 text-sm">
-
-        <h4 class="font-bold mb-2">Contact Us</h4>
-        <p>Phone: 09121234567</p>
-        <p>Email: coffeeshop@gmail.com</p>
-
-        <h4 class="font-bold mt-6 mb-2">Address</h4>
-        <p>Tehran, ValiAsr St</p>
-
-        <h4 class="font-bold mt-6 mb-2">About</h4>
-        <p>
-            At our cozy coffee shop, we serve more than just great coffee. 
-            From handcrafted espresso drinks to delicious pizzas and hearty meals, 
-            we have something for everyone. Whether you're here to relax, grab a bite, 
-            or catch up with friends, we promise a warm and welcoming atmosphere.
-        </p>
-
-        <h4 class="font-bold mt-6 mb-2">Follow Us</h4>
-        <p>Instagram: @coffeeshop</p>
-        <p>Telegram: @coffeeshop</p>
-
-        <div class="text-center mt-6 text-xs text-amber-200">
-            2025 My Coffee Shop. All rights reserved.
+    <div class="max-w-6xl mx-auto px-4 text-sm grid grid-cols-1 sm:grid-cols-3 gap-6">
+        <div>
+            <h4 class="font-bold mb-2">Contact Us</h4>
+            <p>Phone: 09121234567</p>
+            <p>Email: <a href="mailto:coffeeshop@gmail.com" class="underline">coffeeshop@gmail.com</a></p>
         </div>
+        <div>
+            <h4 class="font-bold mb-2">Address</h4>
+            <p>Tehran, ValiAsr St</p>
+        </div>
+        <div>
+            <h4 class="font-bold mb-2">Follow Us</h4>
+            <p><a href="#" class="underline">Instagram</a></p>
+            <p><a href="#" class="underline">Telegram</a></p>
+        </div>
+    </div>
+    <div class="text-center mt-6 text-xs text-amber-200">
+        2025 My Coffee Shop. All rights reserved.
     </div>
 </footer>
 
