@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from products.models import Product, Image
+from products.models import Product, Image, Favorite
 
 
 class ImageSerializer(serializers.ModelSerializer):
@@ -37,3 +37,11 @@ class ProductSerializer(serializers.ModelSerializer):
                 Image.objects.create(product=instance, **image_data)
 
         return instance
+    
+
+class FavoriteSerializer(serializers.ModelSerializer):
+    product = ProductSerializer(read_only=True)
+
+    class Meta:
+        model = Product
+        field = ['id', 'product']
