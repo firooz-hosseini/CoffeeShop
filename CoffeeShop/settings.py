@@ -37,9 +37,11 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    "rest_framework",
-    "django_filters",
-    "drf_spectacular",
+    'rest_framework',
+    'django_filters',
+    'drf_spectacular',
+    'drf_yasg',
+    'rest_framework_simplejwt',
     'accounts.apps.AccountsConfig',
     'orders.apps.OrdersConfig',
     'products.apps.ProductsConfig',
@@ -186,3 +188,5 @@ import os
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
 MEDIA_ROOT  = os.path.join(BASE_DIR, "media")
+
+KAVENEGAR_API_KEY='4F36465935546338734B356B55524633773376344437547467674A6F72657447586159776E774D756146383D'
