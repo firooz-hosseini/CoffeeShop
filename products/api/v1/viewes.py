@@ -10,15 +10,8 @@ class ProductViewSet(viewsets.ModelViewSet):
     lookup_field = 'id'
     
     def get_permissions(self):
-        if self.action == 'create':
+        if self.action in ['create', 'update', 'partial_update', 'destroy']:
             permission_classes = [permissions.IsAdminUser]
-        elif self.action == 'update':
-            permission_classes = [permissions.IsAdminUser]
-        elif self.action == 'destroy':
-            permission_classes = [permissions.IsAdminUser]
-        elif self.action == 'partial_update':
-            permission_classes = [permissions.IsAdminUser]
-        
         else:
             permission_classes = [permissions.AllowAny]
-        return [permission() for permission in permission_classes]    
+        return [permission() for permission in permission_classes]
