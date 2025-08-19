@@ -37,6 +37,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    "rest_framework",
+    "django_filters",
+    "drf_spectacular",
     'accounts.apps.AccountsConfig',
     'orders.apps.OrdersConfig',
     'products.apps.ProductsConfig',
@@ -138,3 +141,48 @@ EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'firo744@gmail.com'
 EMAIL_HOST_PASSWORD = 'tttc rnro libn zlxg'
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+
+
+
+
+
+REST_FRAMEWORK = {
+    # مستندات OpenAPI/Swagger
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
+
+    # احراز هویت پیش‌فرض = JWT
+    "DEFAULT_AUTHENTICATION_CLASSES": [
+        "rest_framework_simplejwt.authentication.JWTAuthentication",
+    ],
+
+    # سطح دسترسی پیش‌فرض؛ می‌تونی روی ویوست‌ها override کنی
+    "DEFAULT_PERMISSION_CLASSES": [
+        "rest_framework.permissions.AllowAny",
+    ],
+
+    # Pagination استاندارد (count, next, previous, results)
+    "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
+    "PAGE_SIZE": 10,  # قابل override با page_size در Pagination سفارشی (پایین می‌ذاریم)
+    
+    # فیلتر/جستجو/مرتب‌سازی با Query Params
+    "DEFAULT_FILTER_BACKENDS": [
+        "django_filters.rest_framework.DjangoFilterBackend",
+        "rest_framework.filters.SearchFilter",
+        "rest_framework.filters.OrderingFilter",
+    ],
+}
+
+
+
+# تنظیمات drf-spectacular
+SPECTACULAR_SETTINGS = {
+    "TITLE": "CoffeeShop API",
+    "DESCRIPTION": "Public/Private API for CoffeeShop",
+    "VERSION": "1.0.0",
+}
+
+
+import os
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
+MEDIA_ROOT  = os.path.join(BASE_DIR, "media")
