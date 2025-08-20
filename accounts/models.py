@@ -26,17 +26,5 @@ class CustomUser(AbstractUser):
     USERNAME_FIELD = 'mobile'
     objects = CustomUserManger()
 
-    otp_code = models.CharField(max_length=6, blank=True, null=True)
-    otp_created_at = models.DateTimeField(blank=True, null=True)
-    
-    def generate_otp(self):
-        self.otp_code = str(random.randint(100000, 999999))
-        self.otp_created_at = timezone.now()
-        self.save()
-        return self.otp_code
-
-    def otp_valid(self):
-        return self.otp_created_at and self.otp_created_at + timezone.timedelta(minutes=5) > timezone.now()
-
     def __str__(self):
         return self.mobile
