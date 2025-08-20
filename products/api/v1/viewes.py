@@ -2,11 +2,13 @@ from rest_framework import viewsets, permissions, status, views
 from rest_framework.response import Response
 from products.models import Product, Favorite
 from .serializers import ProductSerializer, FavoriteSerializer
+from products.permissions import IsAdminUser, IsOwnerOrAuthenticated
 
 class ProductViewSet(views.ModelViewSet):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
     lookup_field = 'id'
+    permission_classes = [IsAdminUser]
     
     def get_permissions(self):
         if self.action in ['create', 'update', 'partial_update', 'destroy']:
@@ -19,6 +21,7 @@ class ProductViewSet(views.ModelViewSet):
 class FavoriteViewSet(viewsets.ViewSet):
     permission_classes = [permissions.IsAuthenticated]
     lookup_field = 'product_id'
+    permission_classes = [IsOwnerOrAuthenticated]
 
     def list(self, request):
         queryset = Favorite.objects.filter(user=request.user)
