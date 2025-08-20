@@ -1,11 +1,10 @@
-from django.contrib import admin
 from django.urls import path,include
 from rest_framework.routers import DefaultRouter
 
-from . import viewes
+from . import views
 router = DefaultRouter()
-router.register("products",viewes.ProductViewSet),
-router.register("categories",viewes.CategoryViewSet),
+router.register("products",views.ProductViewSet),
+router.register("categories",views.CategoryViewSet),
 urlpatterns = [
     path("", include(router.urls)),
 ]

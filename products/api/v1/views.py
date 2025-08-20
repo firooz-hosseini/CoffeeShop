@@ -1,7 +1,7 @@
 from rest_framework import viewsets, permissions
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import SearchFilter, OrderingFilter
-from products.models import Product, Category, Favorite
+from products.models import Product, Category
 from .serializers import ProductSerializer,CategorySerializer
 
 class ProductViewSet(viewsets.ModelViewSet):
