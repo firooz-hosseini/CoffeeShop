@@ -1,6 +1,5 @@
 from rest_framework import serializers
 from accounts.models import CustomUser
-from django.contrib.auth.hashers import make_password
 
 class SignUpSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True)
@@ -9,21 +8,18 @@ class SignUpSerializer(serializers.ModelSerializer):
         model = CustomUser
         fields = ['mobile', 'password']
 
-    def create(self, validated_data):
-        temp_user = CustomUser(
-            mobile=validated_data['mobile'],
-            password=make_password(validated_data['password'])
-        )
-        temp_user.generate_otp()
-        return temp_user
+    def validate_mobile(self, value):
+        if not value.isdigit() or len(value) != 11:
+            raise serializers.ValidationError("Mobile number must be 11 digits")
+        return value
 
 class VerifyOtpSerializer(serializers.Serializer):
-    mobile = serializers.CharField()
-    otp_code = serializers.CharField(write_only=True)
+    mobile = serializers.CharField(max_length=11)
+    otp_code = serializers.CharField(max_length=4, write_only=True)
 
     def validate(self, attrs):
         mobile = attrs.get('mobile')
-        otp = attrs.get('otp_code')
+        otp= attrs.get('otp_code')
 
         try:
             user = CustomUser.objects.get(mobile=mobile)
