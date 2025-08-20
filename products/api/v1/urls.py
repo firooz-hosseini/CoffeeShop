@@ -1,10 +1,10 @@
-from django.contrib import admin
 from django.urls import path,include
 from rest_framework.routers import DefaultRouter
 
-from . import viewes
+from . import views
+
 router = DefaultRouter()
-router.register("",viewes.ProductViewSet),
+router.register(r'products', views.ProductViewSet, basename='product')
 
 urlpatterns = [
     path("", include(router.urls)),
