@@ -1,11 +1,11 @@
-from rest_framework import viewsets, permissions, status, views, filters
+from rest_framework import viewsets, permissions, status, filters
 from rest_framework.response import Response
 from products.models import Product, Favorite
 from .serializers import ProductSerializer, FavoriteSerializer
 from products.permissions import IsAdminUser, IsOwnerOrAuthenticated
 
 
-class ProductViewSet(views.ModelViewSet):
+class ProductViewSet(viewsets.ModelViewSet):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
     lookup_field = 'id'
