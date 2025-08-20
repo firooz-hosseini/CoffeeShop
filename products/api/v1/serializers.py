@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from products.models import Product, Image, Favorite
+from products.models import Product, Image
 
 
 class ImageSerializer(serializers.ModelSerializer):
