@@ -11,6 +11,8 @@ class Product(models.Model):
     category = models.ForeignKey('Category',on_delete=models.CASCADE,related_name='product_category')
     price = models.PositiveIntegerField()
     quantity = models.PositiveIntegerField()
+    tags = models.JSONField(default=list, blank=True, null=True)
+    is_active = models.BooleanField(default=True)
 
     def average_rating(self):
         return self.Rating_product.aggregate(avg=Avg('score'))['avg'] or 0
