@@ -16,24 +16,25 @@ class ProductSerializer(serializers.ModelSerializer):
         model = Product
         fields = '__all__'
 
-
     def create(self, validated_data):
-        images_data = validated_data.pop('image', [])
+        image_data = validated_data.pop('image', [])
         product = Product.objects.create(**validated_data)
         for image_data in image_data:
             Image.objects.create(product=product, **image_data)
         return product
 
     def update(self, instance, validated_data):
-        images_data = validated_data.pop('image', None)
+        image_data = validated_data.pop('image', None)
+
 
         for k, v in validated_data.items():
             setattr(instance, k, v)
         instance.save()
 
-        if images_data is not None:
+        if image_data is not None:
             instance.image.all().delete()
-            for image_data in images_data:
+            for image_data in image_data:
+
                 Image.objects.create(product=instance, **image_data)
 
         return instance
