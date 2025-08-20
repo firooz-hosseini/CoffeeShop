@@ -11,7 +11,7 @@ class ProductViewSet(viewsets.ModelViewSet):
     lookup_field = 'id'
     permission_classes = [IsAdminUser]
     filter_backends = [filters.SearchFilter]
-    search_fields = ['name', '^name','description']
+    search_fields = ['title', '^title','description']
     
     def get_permissions(self):
         if self.action in ['create', 'update', 'partial_update', 'destroy']:
