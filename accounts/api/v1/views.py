@@ -4,10 +4,7 @@ from rest_framework.response import Response
 from .serializers import SignUpSerializer, VerifyOtpSerializer
 from accounts.models import CustomUser
 from rest_framework_simplejwt.tokens import RefreshToken
-from datetime import timedelta
-from django.utils import timezone
 from django.core.cache import cache
-from django.contrib.auth.hashers import make_password
 from .sms_utils import send_sms
 import random
 
