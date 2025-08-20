@@ -26,4 +26,8 @@ class ProductViewSet(viewsets.ModelViewSet):
         else:
             permission_classes = [permissions.AllowAny]
         return [permission() for permission in permission_classes]
-  
+
+class CategoryViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = Category.objects.all()
+    serializer_class = CategorySerializer
+    permission_classes = [permissions.AllowAny]  
