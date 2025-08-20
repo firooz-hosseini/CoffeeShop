@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from products.models import Product, Image
+from products.models import Product, Image, Favorite
 
 
 class ImageSerializer(serializers.ModelSerializer):
@@ -16,10 +16,11 @@ class ProductSerializer(serializers.ModelSerializer):
         model = Product
         fields = '__all__'
 
+
     def create(self, validated_data):
         images_data = validated_data.pop('image', [])
         product = Product.objects.create(**validated_data)
-        for image_data in images_data:
+        for image_data in image_data:
             Image.objects.create(product=product, **image_data)
         return product
 
@@ -31,8 +32,16 @@ class ProductSerializer(serializers.ModelSerializer):
         instance.save()
 
         if images_data is not None:
-            instance.images.all().delete()
+            instance.image.all().delete()
             for image_data in images_data:
                 Image.objects.create(product=instance, **image_data)
 
         return instance
+    
+
+class FavoriteSerializer(serializers.ModelSerializer):
+    product = ProductSerializer(read_only=True)
+
+    class Meta:
+        model = Product
+        field = ['id', 'product']
