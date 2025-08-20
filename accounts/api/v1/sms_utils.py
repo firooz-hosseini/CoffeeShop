@@ -1,7 +1,4 @@
-import os
 from kavenegar import KavenegarAPI, APIException, HTTPException
-
-KAVENEGAR_API_KEY = os.environ.get("KAVENEGAR_API_KEY")
 
 def send_sms(mobile, message, test=True):
     if test:
@@ -9,12 +6,12 @@ def send_sms(mobile, message, test=True):
         return True
     
     try:
-        api = KavenegarAPI(KAVENEGAR_API_KEY)
-        response = api.sms_send(
-            sender="2000660110",
-            receptor=mobile,
-            message=message
-        )
+        api = KavenegarAPI('4F36465935546338734B356B55524633773376344437547467674A6F72657447586159776E774D756146383D')
+        response = api.sms_send({
+            'receptor': mobile,
+            'message': message,
+            'sender': '2000660110'
+        })
         print(response)
         return True
     except (APIException, HTTPException) as e:
