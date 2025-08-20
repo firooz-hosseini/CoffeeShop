@@ -10,8 +10,8 @@ class ProductViewSet(viewsets.ModelViewSet):
     lookup_field = 'id'
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
     filterset_fields = ["category"]
-    search_fields = ["name", "description", "tags"]
-    ordering_fields = ["price", "name", "stock"]
+    search_fields = ["title", "description", "tags"]
+    ordering_fields = ["price", "title", "quantity"]
     ordering = ["id"]
     def get_permissions(self):
         if self.action == 'create':
