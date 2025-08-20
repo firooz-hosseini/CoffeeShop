@@ -15,10 +15,10 @@ class ProductSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
         fields = '__all__'
-        ingredient= serializers.StringRelatedField(many=True)
+
 
     def create(self, validated_data):
-        image_data = validated_data.pop('image', [])
+        images_data = validated_data.pop('image', [])
         product = Product.objects.create(**validated_data)
         for image_data in image_data:
             Image.objects.create(product=product, **image_data)
