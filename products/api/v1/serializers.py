@@ -1,5 +1,10 @@
 from rest_framework import serializers
-from products.models import Product, Image
+from products.models import Product,Category,Image, Favorite
+
+class CategorySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Category
+        fields = ["id", "title"]
 
 
 class ImageSerializer(serializers.ModelSerializer):
@@ -10,7 +15,10 @@ class ImageSerializer(serializers.ModelSerializer):
 
 class ProductSerializer(serializers.ModelSerializer):
     ingredient = serializers.StringRelatedField(many=True)
+    category = CategorySerializer(read_only=True)
+    category_id = serializers.PrimaryKeyRelatedField(queryset=Category.objects.all(), source="category", write_only=True)
     image = ImageSerializer(many=True, required=False)
+
 
     class Meta:
         model = Product

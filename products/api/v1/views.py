@@ -1,8 +1,10 @@
 from rest_framework import viewsets, permissions, status, filters
+from .permissions import IsAdminUser, IsOwnerOrAuthenticated
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework.filters import SearchFilter, OrderingFilter
+from products.models import Product, Category, Favorite
 from rest_framework.response import Response
-from products.models import Product, Favorite
-from .serializers import ProductSerializer, FavoriteSerializer
-from products.api.v1.permissions import IsAdminUser, IsOwnerOrAuthenticated
+from .serializers import ProductSerializer, FavoriteSerializer,CategorySerializer
 
 
 class ProductViewSet(viewsets.ModelViewSet):
@@ -11,7 +13,28 @@ class ProductViewSet(viewsets.ModelViewSet):
     lookup_field = 'id'
     permission_classes = [IsAdminUser]
     filter_backends = [filters.SearchFilter]
-    search_fields = ['title', '^title','description']
+    search_fields = ['title', '^title','description', "quantity", "tags"]
+    filterset_fields = ["category"]
+    ordering_fields = ["price", "title", "quantity"]
+    ordering = ["id"]
+    def get_permissions(self):
+        if self.action == 'create':
+            permission_classes = [permissions.IsAdminUser]
+        elif self.action == 'update':
+            permission_classes = [permissions.IsAdminUser]
+        elif self.action == 'destroy':
+            permission_classes = [permissions.IsAdminUser]
+        elif self.action == 'partial_update':
+            permission_classes = [permissions.IsAdminUser]
+        
+        else:
+            permission_classes = [permissions.AllowAny]
+        return [permission() for permission in permission_classes]
+
+class CategoryViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = Category.objects.all()
+    serializer_class = CategorySerializer
+    permission_classes = [permissions.AllowAny]  
     
     def get_permissions(self):
         if self.action in ['create', 'update', 'partial_update', 'destroy']:
@@ -50,3 +73,6 @@ class FavoriteViewSet(viewsets.ViewSet):
             return Response(status=status.HTTP_204_NO_CONTENT)
         except Favorite.DoesNotExist:
             return Response({"detail": "Favorite not found."}, status=status.HTTP_404_NOT_FOUND)
+
+       
+    
