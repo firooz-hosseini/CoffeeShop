@@ -4,8 +4,8 @@ from rest_framework.routers import DefaultRouter
 
 from . import viewes
 router = DefaultRouter()
-router.register("",viewes.ProductViewSet),
-
+router.register("products",viewes.ProductViewSet),
+router.register("categories",viewes.CategoryViewSet),
 urlpatterns = [
     path("", include(router.urls)),
 ]
