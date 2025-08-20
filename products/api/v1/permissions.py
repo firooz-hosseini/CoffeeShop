@@ -1,11 +1,11 @@
-from rest_framework.permissions import Permissions, BasePermission
+from rest_framework import permissions
 
 
-class IsAdminUser(Permissions.BasePermission):
+class IsAdminUser(permissions.BasePermission):
     def has_permission(self, request, view):
         return bool(request.user and request.user.is_staff)
     
 
-class IsOwnerOrAuthenticated(BasePermission):
+class IsOwnerOrAuthenticated(permissions.BasePermission):
     def has_permission(self, request, view):
         return bool(request.user and request.user.is_authenticated)
