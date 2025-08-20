@@ -41,9 +41,10 @@ class Category(models.Model):
 class Image(models.Model):
     image = models.ImageField(upload_to='product_image/')
     product = models.ForeignKey(Product,on_delete=models.CASCADE,related_name='image_product')
+    is_main = models.BooleanField(default=False)
 
     def __str__(self):
-        return self.product.title
+        return f"{self.product.title} - {'Main' if self.is_main else 'Extra'}"
     
 
 class Favorite(models.Model):
