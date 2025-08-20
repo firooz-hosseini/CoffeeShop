@@ -26,6 +26,7 @@ class ProductSerializer(serializers.ModelSerializer):
     def update(self, instance, validated_data):
         image_data = validated_data.pop('image', None)
 
+
         for k, v in validated_data.items():
             setattr(instance, k, v)
         instance.save()
@@ -33,6 +34,7 @@ class ProductSerializer(serializers.ModelSerializer):
         if image_data is not None:
             instance.image.all().delete()
             for image_data in image_data:
+
                 Image.objects.create(product=instance, **image_data)
 
         return instance
