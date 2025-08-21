@@ -1,12 +1,18 @@
 from rest_framework import viewsets, status
+from rest_framework.views import APIView
 from rest_framework.decorators import action
 from rest_framework.response import Response
-from .serializers import SignUpSerializer, VerifyOtpSerializer
+from .serializers import LoginSerializer, SignUpSerializer, VerifyOtpSerializer, LogOutSerializer
 from accounts.models import CustomUser
-from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework_simplejwt.tokens import RefreshToken, OutstandingToken, BlacklistedToken
 from django.core.cache import cache
 from .sms_utils import send_sms
 import random
+
+from django.contrib.auth import authenticate
+from rest_framework.permissions import IsAuthenticated, AllowAny
+
+
 
 class SignUpApiViewSet(viewsets.GenericViewSet):
     queryset = CustomUser.objects.all()
@@ -26,6 +32,9 @@ class SignUpApiViewSet(viewsets.GenericViewSet):
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
+class VerifyOtpApiViewSet(viewsets.GenericViewSet):
+    queryset = CustomUser.objects.all()
+    serializer_class = VerifyOtpSerializer
 
     @action(detail=False, methods=['post'])
     def verify_otp(self, request):
@@ -56,3 +65,46 @@ class SignUpApiViewSet(viewsets.GenericViewSet):
             }, status=status.HTTP_201_CREATED)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class LoginApiViewSet(viewsets.GenericViewSet):
+    queryset = CustomUser.objects.all()
+    serializer_class = LoginSerializer
+
+
+    @action(detail=False, methods=['post'])
+    def login(self, request):
+        serializer = LoginSerializer(data=request.data)
+        if serializer.is_valid():
+            mobile = serializer.validated_data["mobile"]
+            password = serializer.validated_data["password"]
+            
+            user = authenticate(request, mobile=mobile, password=password)
+            
+            if user is not None:
+                refresh = RefreshToken.for_user(user)
+                return Response({
+                    "message": "Login successful",
+                    "refresh": str(refresh),
+                    "access": str(refresh.access_token)
+                }, status=status.HTTP_200_OK)
+            else:
+                return Response({"error": "Invalid mobile or password"}, status=status.HTTP_401_UNAUTHORIZED)
+        
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class LogoutAPIViewSet(viewsets.GenericViewSet):
+    serializer_class = LogOutSerializer
+    permission_classes = [IsAuthenticated]
+
+    @action(detail=False, methods=['post'])
+    def logout(self, request):
+        user = request.user
+
+        tokens = OutstandingToken.objects.filter(user=user)
+        for t in tokens:
+            BlacklistedToken.objects.get_or_create(token=t)
+
+        return Response({"message": "Logout successful. All tokens invalidated."},
+                        status=status.HTTP_205_RESET_CONTENT)
