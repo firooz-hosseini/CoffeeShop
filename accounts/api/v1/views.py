@@ -24,9 +24,19 @@ class SignUpApiViewSet(viewsets.GenericViewSet):
         if serializer.is_valid():
             mobile = serializer.validated_data["mobile"]
             password = serializer.validated_data["password"]
+            password = serializer.validated_data["password"]
+            email = serializer.validated_data.get("email")
+            first_name = serializer.validated_data.get("first_name")
+            last_name = serializer.validated_data.get("last_name")
 
             otp_code = str(random.randint(1000, 9999))
-            cache.set(f"otp_{otp_code}", {"mobile": mobile, "password": password}, timeout=300)
+            cache.set(f"otp_{otp_code}", {
+                "mobile": mobile,
+                "password": password,
+                "email": email,
+                "first_name": first_name,
+                "last_name": last_name
+            }, timeout=300)
             send_sms(mobile, f"Your OTP code: {otp_code}", test=True)
             return Response({"message": "OTP sent (test mode)"}, status=status.HTTP_200_OK)
 
@@ -41,7 +51,6 @@ class VerifyOtpApiViewSet(viewsets.GenericViewSet):
         serializer = VerifyOtpSerializer(data=request.data)
         if serializer.is_valid():
             otp_code = serializer.validated_data["otp_code"]
-
             cached_data = cache.get(f"otp_{otp_code}")
             if not cached_data:
                 return Response({"error": "Invalid OTP"}, status=status.HTTP_400_BAD_REQUEST)
@@ -49,8 +58,19 @@ class VerifyOtpApiViewSet(viewsets.GenericViewSet):
 
             mobile = cached_data["mobile"]
             password = cached_data["password"]
+            email = cached_data.get("email")
+            first_name = cached_data.get("first_name")
+            last_name = cached_data.get("last_name")
 
-            user, created = CustomUser.objects.get_or_create(mobile=mobile)
+            user, created = CustomUser.objects.get_or_create(
+                mobile=mobile,
+                defaults={
+                    "email": email,
+                    "first_name": first_name,
+                    "last_name": last_name
+                }
+            )
+            
             if created:
                 user.set_password(password)
                 user.save()

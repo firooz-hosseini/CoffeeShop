@@ -1,3 +1,4 @@
+
 """
 Django settings for CoffeeShop project.
 
@@ -9,7 +10,7 @@ https://docs.djangoproject.com/en/5.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.2/ref/settings/
 """
-
+from datetime import timedelta
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -150,25 +151,20 @@ DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
 
 REST_FRAMEWORK = {
-    # مستندات OpenAPI/Swagger
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
 
-    # احراز هویت پیش‌فرض = JWT
     "DEFAULT_AUTHENTICATION_CLASSES": [
         "rest_framework_simplejwt.authentication.JWTAuthentication",
         'rest_framework.authentication.SessionAuthentication',
     ],
 
-    # سطح دسترسی پیش‌فرض؛ می‌تونی روی ویوست‌ها override کنی
     "DEFAULT_PERMISSION_CLASSES": [
         "rest_framework.permissions.AllowAny",
     ],
 
-    # Pagination استاندارد (count, next, previous, results)
     "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
-    "PAGE_SIZE": 10,  # قابل override با page_size در Pagination سفارشی (پایین می‌ذاریم)
+    "PAGE_SIZE": 10, 
     
-    # فیلتر/جستجو/مرتب‌سازی با Query Params
     "DEFAULT_FILTER_BACKENDS": [
         # "django_filters.rest_framework.DjangoFilterBackend",
         "rest_framework.filters.SearchFilter",
@@ -177,11 +173,21 @@ REST_FRAMEWORK = {
 }
 
 
-
-# تنظیمات drf-spectacular
 SPECTACULAR_SETTINGS = {
     "TITLE": "CoffeeShop API",
     "DESCRIPTION": "Public/Private API for CoffeeShop",
     "VERSION": "1.0.0",
+}
+
+
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=30),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=7),
+    'ROTATE_REFRESH_TOKENS': True,
+    'BLACKLIST_AFTER_ROTATION': True,
+    'ALGORITHM': 'HS256',
+    'SIGNING_KEY': SECRET_KEY,
+    'AUTH_HEADER_TYPES': ('Bearer',),
+    'AUTH_TOKEN_CLASSES': ('rest_framework_simplejwt.tokens.AccessToken',),
 }
 
