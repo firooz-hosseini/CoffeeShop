@@ -4,8 +4,8 @@ from . import views
 
 router = DefaultRouter()
 router.register("categories",views.CategoryViewSet),
-router.register('products', views.ProductViewSet, basename='product')
-router.register('favorites', views.FavoriteViewSet, basename='favorite')
+router.register('products', views.ProductViewSet, basename='product-api')
+router.register('favorites', views.FavoriteViewSet, basename='favorite-api')
 
 urlpatterns = [
     path("", include(router.urls)),
