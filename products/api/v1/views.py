@@ -12,7 +12,7 @@ class ProductViewSet(viewsets.ModelViewSet):
     serializer_class = ProductSerializer
     lookup_field = 'id'
     permission_classes = [IsAdminUser]
-    filter_backends = [filters.SearchFilter]
+    filter_backends = [SearchFilter, DjangoFilterBackend, OrderingFilter]
     search_fields = ['title', '^title','description', "quantity", "tags"]
     filterset_fields = ["category"]
     ordering_fields = ["price", "title", "quantity"]
