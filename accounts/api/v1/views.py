@@ -2,8 +2,10 @@ from rest_framework import viewsets, status
 from rest_framework.views import APIView
 from rest_framework.decorators import action
 from rest_framework.response import Response
-from .serializers import LoginSerializer, SignUpSerializer, VerifyOtpSerializer, LogOutSerializer
+from .serializers import LoginSerializer, SignUpSerializer, VerifyOtpSerializer, LogOutSerializer, ProfileSerializer, FavoriteSerializer, OrderSerializer, OrderItemSerializer
 from accounts.models import CustomUser
+from products.models import Favorite
+from orders.models import Order, OrderItem
 from rest_framework_simplejwt.tokens import RefreshToken, OutstandingToken, BlacklistedToken
 from django.core.cache import cache
 from .sms_utils import send_sms
@@ -128,3 +130,86 @@ class LogoutAPIViewSet(viewsets.GenericViewSet):
 
         return Response({"message": "Logout successful. All tokens invalidated."},
                         status=status.HTTP_205_RESET_CONTENT)
+
+
+class FullProfileViewSet(viewsets.GenericViewSet):
+    permission_classes = [IsAuthenticated]
+
+    @action(detail=False, methods=['get'])
+    def full_profile(self, request):
+        user = request.user
+
+        profile_data = ProfileSerializer(user).data
+        favorites = Favorite.objects.filter(user=user)
+        favorites_data = FavoriteSerializer(favorites, many=True).data
+        orders = Order.objects.filter(user=user)
+        orders_data = OrderSerializer(orders, many=True).data
+        orders_items_data = {}
+        for order in orders:
+            orders_items_data[order.id] = OrderItemSerializer(order.items.all(), many=True).data
+
+        return Response({
+            "profile": profile_data,
+            "favorites": favorites_data,
+            "orders": orders_data,
+            "order_items": orders_items_data,
+
+        })
+    
+
+class ProfileViewSet(viewsets.GenericViewSet):
+    permission_classes = [IsAuthenticated]
+    serializer_class = ProfileSerializer
+
+    @action(detail=False, methods=['get'])
+    def me(self, request):
+        serializer = ProfileSerializer(request.user)
+        return Response(serializer.data)
+
+    @action(detail=False, methods=['put', 'patch'])
+    def update_profile(self, request):
+        serializer = ProfileSerializer(request.user, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class FavoriteViewSet(viewsets.GenericViewSet):
+    permission_classes = [IsAuthenticated]
+
+    @action(detail=False, methods=['get'])
+    def list_favorite(self, request):
+        favorites = Favorite.objects.filter(user=request.user)
+        serializer = FavoriteSerializer(favorites, many=True)
+        return Response(serializer.data)
+
+    @action(detail=True, methods=['delete'])
+    def delete_favorite(self, request, pk=None):
+        try:
+            fav = Favorite.objects.get(pk=pk, user=request.user)
+            fav.delete()
+            return Response({"detail": "Favorite deleted"}, status=status.HTTP_204_NO_CONTENT)
+        except Favorite.DoesNotExist:
+            return Response({"detail": "Not found"}, status=status.HTTP_404_NOT_FOUND)
+
+
+
+class OrderViewSet(viewsets.GenericViewSet):
+    permission_classes = [IsAuthenticated]
+
+    @action(detail=False, methods=['get'])
+    def list_order(self, request):
+        orders = Order.objects.filter(user=request.user)
+        serializer = OrderSerializer(orders, many=True)
+        return Response(serializer.data)
+
+    @action(detail=True, methods=['get'], url_path='items')
+    def items_order(self, request, pk=None):
+        try:
+            order = Order.objects.get(pk=pk, user=request.user)
+            serializer = OrderItemSerializer(order.items.all(), many=True)
+            return Response(serializer.data)
+        except Order.DoesNotExist:
+            return Response({"detail": "Order not found"}, status=404)
+
