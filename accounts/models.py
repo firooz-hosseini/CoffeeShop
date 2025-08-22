@@ -22,6 +22,9 @@ class CustomUser(AbstractUser):
     mobile = models.CharField(max_length=11,unique=True)
     profile_picture = models.ImageField(upload_to='user_picture/',null=True,blank=True)
     username = None
+    email = models.EmailField(null=True, blank=True)
+    first_name = models.CharField(max_length=150, null=True, blank=True)
+    last_name = models.CharField(max_length=150, null=True, blank=True)
     USERNAME_FIELD = 'mobile'
     objects = CustomUserManger()
 
