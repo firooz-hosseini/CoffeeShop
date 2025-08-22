@@ -155,7 +155,6 @@ REST_FRAMEWORK = {
 
     "DEFAULT_AUTHENTICATION_CLASSES": [
         "rest_framework_simplejwt.authentication.JWTAuthentication",
-        'rest_framework.authentication.SessionAuthentication',
     ],
 
     "DEFAULT_PERMISSION_CLASSES": [
@@ -173,11 +172,23 @@ REST_FRAMEWORK = {
 }
 
 
+
 SPECTACULAR_SETTINGS = {
-    "TITLE": "CoffeeShop API",
-    "DESCRIPTION": "Public/Private API for CoffeeShop",
-    "VERSION": "1.0.0",
+    'TITLE': 'CoffeeShop API',
+    'DESCRIPTION': 'API Documentation for CoffeeShop Project',
+    'VERSION': '1.0.0',
+    'SERVE_INCLUDE_SCHEMA': True,
+    'COMPONENT_SPLIT_REQUEST': True,
+    'SECURITY_SCHEMES': {
+        'BearerAuth': {
+            'type': 'http',
+            'scheme': 'bearer',
+            'bearerFormat': 'JWT',
+        }
+    },
+    'DEFAULT_SECURITY': [{'BearerAuth': []}],
 }
+
 
 
 SIMPLE_JWT = {

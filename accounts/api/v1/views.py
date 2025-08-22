@@ -119,7 +119,7 @@ class LoginApiViewSet(viewsets.GenericViewSet):
 class LogoutAPIViewSet(viewsets.GenericViewSet):
     serializer_class = LogOutSerializer
     permission_classes = [IsAuthenticated]
-
+    
     @action(detail=False, methods=['post'])
     def logout(self, request):
         user = request.user
@@ -128,8 +128,7 @@ class LogoutAPIViewSet(viewsets.GenericViewSet):
         for t in tokens:
             BlacklistedToken.objects.get_or_create(token=t)
 
-        return Response({"message": "Logout successful. All tokens invalidated."},
-                        status=status.HTTP_205_RESET_CONTENT)
+        return Response({"detail": "Successfully logged out."}, status=status.HTTP_200_OK)
 
 
 class FullProfileViewSet(viewsets.GenericViewSet):
