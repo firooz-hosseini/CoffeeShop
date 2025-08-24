@@ -12,7 +12,7 @@ from .sms_utils import send_sms
 import random
 
 from django.contrib.auth import authenticate
-from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework.permissions import IsAuthenticated
 
 
 
@@ -23,9 +23,8 @@ class SignUpApiViewSet(viewsets.GenericViewSet):
     def create(self, request):
         serializer = SignUpSerializer(data=request.data)
         if serializer.is_valid():
-            mobile = serializer.validated_data["mobile"]
-            password = serializer.validated_data["password"]
-            password = serializer.validated_data["password"]
+            mobile = serializer.validated_data.get("mobile")
+            password = serializer.validated_data.get("password")
             email = serializer.validated_data.get("email")
             first_name = serializer.validated_data.get("first_name")
             last_name = serializer.validated_data.get("last_name")

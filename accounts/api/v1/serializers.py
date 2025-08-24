@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from accounts.models import CustomUser
-from products.models import Product, Favorite
+from products.models import Favorite
 from orders.models import Order, OrderItem
 
 
