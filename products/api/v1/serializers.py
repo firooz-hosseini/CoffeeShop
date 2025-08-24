@@ -1,5 +1,5 @@
 from rest_framework import serializers, permissions
-from products.models import Product,Category,Image, Favorite
+from products.models import Product,Category,Image, Favorite, Ingredient
 
 class CategorySerializer(serializers.ModelSerializer):
     class Meta:
@@ -13,8 +13,20 @@ class ImageSerializer(serializers.ModelSerializer):
         fields = ['id', 'image', 'is_main']
 
 
+
+class IngredientField(serializers.PrimaryKeyRelatedField):
+    def to_representation(self, obj):
+        return obj.title
+
+    def to_internal_value(self, data):
+        if isinstance(data, int):
+            return super().to_internal_value(data)
+        ingredient, created = Ingredient.objects.get_or_create(title=data)
+        return ingredient
+    
+    
 class ProductSerializer(serializers.ModelSerializer):
-    ingredient = serializers.StringRelatedField(many=True)
+    ingredient = IngredientField(queryset=Ingredient.objects.all(), many=True)
     category = CategorySerializer(read_only=True)
     category_id = serializers.PrimaryKeyRelatedField(queryset=Category.objects.all(), source="category", write_only=True)
     image = ImageSerializer(many=True, required=False, source='image_product')
@@ -66,3 +78,4 @@ class FavoriteSerializer(serializers.ModelSerializer):
     class Meta:
         model = Favorite
         fields = ['id', 'product']
+
