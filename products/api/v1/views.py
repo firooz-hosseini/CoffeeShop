@@ -1,10 +1,12 @@
 from rest_framework import viewsets, permissions, status
+from rest_framework.decorators import action
+from rest_framework.parsers import MultiPartParser
 from .permissions import IsOwnerOrAuthenticated
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import SearchFilter, OrderingFilter
-from products.models import Product, Category, Favorite
+from products.models import Product, Category, Favorite, Image
 from rest_framework.response import Response
-from .serializers import ProductSerializer, FavoriteSerializer,CategorySerializer
+from .serializers import ProductSerializer, FavoriteSerializer,CategorySerializer, ImageSerializer
 from rest_framework.permissions import IsAdminUser
 
 class ProductViewSet(viewsets.ModelViewSet):
@@ -25,20 +27,29 @@ class ProductViewSet(viewsets.ModelViewSet):
             permission_classes = [permissions.AllowAny]
         return [permission() for permission in permission_classes]
     
-    # def create(self, request, *args, **kwargs):
-    #     serializer = self.get_serializer(data=request.data)
-    #     serializer.is_valid(raise_exception=True)
-    #     self.perform_create(serializer)
-    #     return Response(serializer.data, status=status.HTTP_201_CREATED)
-    
-    # def update(self, request, *args, **kwargs):
-    #     partial = kwargs.pop('partial', False)
-    #     instance = self.get_object()
-    #     serializer = self.get_serializer(instance, data=request.data, partial=partial)
-    #     serializer.is_valid(raise_exception=True)
-    #     self.perform_update(serializer)
-    #     return Response(serializer.data)
+    @action(detail=True, methods=['post'], parser_classes=[MultiPartParser])
+    def upload_image(self, request, id=None):
+        product = self.get_object()
+        files = request.FILES.getlist('images')
+        is_main_flags = request.data.getlist('is_main')
 
+        if not files:
+            return Response({'error': 'No images uploaded'}, status=400)
+
+        created_images = []
+        main_found = False
+        for i, img_file in enumerate(files):
+            is_main = is_main_flags[i].lower() == 'true' if i < len(is_main_flags) else False
+            if is_main:
+                if main_found:
+                    is_main = False
+                else:
+                    main_found = True
+            image_obj = Image.objects.create(product=product, image=img_file, is_main=is_main)
+            created_images.append(image_obj)
+
+        serializer = ImageSerializer(created_images, many=True)
+        return Response(serializer.data, status=201)
 
 class CategoryViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Category.objects.all()
