@@ -1,12 +1,12 @@
 from rest_framework import viewsets, status
-from rest_framework.views import APIView
 from rest_framework.decorators import action
 from rest_framework.response import Response
-from .serializers import LoginSerializer, SignUpSerializer, VerifyOtpSerializer, LogOutSerializer, ProfileSerializer, FavoriteSerializer, OrderSerializer, OrderItemSerializer
+from .serializers import LoginSerializer, SignUpSerializer, VerifyOtpSerializer, ProfileSerializer, FavoriteSerializer, OrderSerializer, OrderItemSerializer
 from accounts.models import CustomUser
 from products.models import Favorite
-from orders.models import Order, OrderItem
-from rest_framework_simplejwt.tokens import RefreshToken, OutstandingToken, BlacklistedToken
+from orders.models import Order
+from rest_framework_simplejwt.tokens import RefreshToken, TokenError
+
 from django.core.cache import cache
 from .sms_utils import send_sms
 import random
@@ -20,8 +20,7 @@ class SignUpApiViewSet(viewsets.GenericViewSet):
     queryset = CustomUser.objects.all()
     serializer_class = SignUpSerializer
 
-    @action(detail=False, methods=['post'])
-    def signup(self, request):
+    def create(self, request):
         serializer = SignUpSerializer(data=request.data)
         if serializer.is_valid():
             mobile = serializer.validated_data["mobile"]
@@ -48,8 +47,7 @@ class VerifyOtpApiViewSet(viewsets.GenericViewSet):
     queryset = CustomUser.objects.all()
     serializer_class = VerifyOtpSerializer
 
-    @action(detail=False, methods=['post'])
-    def verify_otp(self, request):
+    def create(self, request):
         serializer = VerifyOtpSerializer(data=request.data)
         if serializer.is_valid():
             otp_code = serializer.validated_data["otp_code"]
@@ -94,8 +92,7 @@ class LoginApiViewSet(viewsets.GenericViewSet):
     serializer_class = LoginSerializer
 
 
-    @action(detail=False, methods=['post'])
-    def login(self, request):
+    def create(self, request):
         serializer = LoginSerializer(data=request.data)
         if serializer.is_valid():
             mobile = serializer.validated_data["mobile"]
@@ -117,25 +114,29 @@ class LoginApiViewSet(viewsets.GenericViewSet):
 
 
 class LogoutAPIViewSet(viewsets.GenericViewSet):
-    serializer_class = LogOutSerializer
     permission_classes = [IsAuthenticated]
-    
-    @action(detail=False, methods=['post'])
-    def logout(self, request):
-        user = request.user
 
-        tokens = OutstandingToken.objects.filter(user=user)
-        for t in tokens:
-            BlacklistedToken.objects.get_or_create(token=t)
+    def create(self, request):
+        try:
+            refresh_token = request.data.get("refresh")
+            if not refresh_token:
+                return Response({"error": "Refresh token is required."}, status=status.HTTP_400_BAD_REQUEST)
 
-        return Response({"detail": "Successfully logged out."}, status=status.HTTP_200_OK)
+            token = RefreshToken(refresh_token)
+            token.blacklist()
+            return Response({"detail": "Successfully logged out from this device."}, status=status.HTTP_200_OK)
 
+        except TokenError:
+            return Response({"error": "Invalid or expired token."}, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+        
 
 class FullProfileViewSet(viewsets.GenericViewSet):
     permission_classes = [IsAuthenticated]
 
-    @action(detail=False, methods=['get'])
-    def full_profile(self, request):
+    
+    def list(self, request):
         user = request.user
 
         profile_data = ProfileSerializer(user).data
