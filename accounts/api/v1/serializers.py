@@ -22,10 +22,6 @@ class LoginSerializer(serializers.Serializer):
     password = serializers.CharField(write_only=True)
 
 
-class LogOutSerializer(serializers.Serializer):
-    pass
-
-
 class ProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
