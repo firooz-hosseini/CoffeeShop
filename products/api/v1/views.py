@@ -1,11 +1,11 @@
 from rest_framework import viewsets, permissions, status
-from .permissions import IsAdminUser, IsOwnerOrAuthenticated
+from .permissions import IsOwnerOrAuthenticated
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import SearchFilter, OrderingFilter
 from products.models import Product, Category, Favorite
 from rest_framework.response import Response
 from .serializers import ProductSerializer, FavoriteSerializer,CategorySerializer
-
+from rest_framework.permissions import IsAdminUser
 
 class ProductViewSet(viewsets.ModelViewSet):
     queryset = Product.objects.all()

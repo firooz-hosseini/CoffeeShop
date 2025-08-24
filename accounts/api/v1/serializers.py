@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from accounts.models import CustomUser
-from products.models import Product, Favorite
+from products.models import Favorite
 from orders.models import Order, OrderItem
 
 
@@ -20,10 +20,6 @@ class VerifyOtpSerializer(serializers.Serializer):
 class LoginSerializer(serializers.Serializer):
     mobile = serializers.CharField(max_length=11)
     password = serializers.CharField(write_only=True)
-
-
-class LogOutSerializer(serializers.Serializer):
-    pass
 
 
 class ProfileSerializer(serializers.ModelSerializer):
