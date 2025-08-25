@@ -5,10 +5,12 @@ from products.models import Product
 class OrderItemSerializer(serializers.ModelSerializer):
     product_title = serializers.ReadOnlyField(source="product.title")
     product_price = serializers.ReadOnlyField(source="product.price")
-
+    product_image = serializers.ImageField(source="product.image",read_only=True)
+    product_quantity = serializers.ReadOnlyField(source="product.quantity")
+    product_category = serializers.CharField(source="product.category.title",read_only=True)
     class Meta:
         model = OrderItem
-        fields = ['id', 'product', 'product_title', 'product_price', 'quantity']
+        fields = ['id', 'product', 'product_title', 'product_price', 'quantity','product_image','product_stock','product_category',]
 
 class OrderSerializer(serializers.ModelSerializer):
     items = OrderItemSerializer(many=True,read_only=True)
