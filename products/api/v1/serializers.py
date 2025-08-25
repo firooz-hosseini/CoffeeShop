@@ -1,4 +1,4 @@
-from rest_framework import serializers, permissions
+from rest_framework import serializers
 from products.models import Product,Category,Image, Favorite, Ingredient
 
 class CategorySerializer(serializers.ModelSerializer):
@@ -46,4 +46,3 @@ class FavoriteSerializer(serializers.ModelSerializer):
     class Meta:
         model = Favorite
         fields = ['id', 'product']
-
