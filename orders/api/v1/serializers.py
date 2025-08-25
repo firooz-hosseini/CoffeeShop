@@ -20,3 +20,14 @@ class OrderSerializer(serializers.ModelSerializer):
         model = Order
         fields = ['id', 'user', 'status', 'time', 'items', 'total_price']
         read_only_fields = ['user', 'status', 'time']
+
+class CommentSerializer(serializers.ModelSerializer):
+    purchased_before = serializers.ReadOnlyField()
+    is_approved = serializers.SerializerMethodField()
+    class Meta:
+        model = Comment
+        fields = "__all__"
+        read_only_fields = ['user', 'time', 'is_approved', 'purchased_before', 'verified_buyer']
+
+    def get_verified_buyer(self, obj):
+        return "Buyer approved"if obj.purchased_before else "buyer dont approved"
