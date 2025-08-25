@@ -1,6 +1,7 @@
 from rest_framework import serializers, permissions
 from products.models import Product,Category,Image, Favorite, Ingredient
 
+
 class CategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = Category

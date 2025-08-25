@@ -58,6 +58,7 @@ class ProductViewSet(viewsets.ModelViewSet):
         serializer = ImageSerializer(created_images, many=True)
         return Response(serializer.data, status=201)
 
+
 class CategoryViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer

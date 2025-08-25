@@ -55,8 +55,8 @@ class VerifyOtpApiViewSet(viewsets.GenericViewSet):
                 return Response({"error": "Invalid OTP"}, status=status.HTTP_400_BAD_REQUEST)
 
 
-            mobile = cached_data["mobile"]
-            password = cached_data["password"]
+            mobile = cached_data.get("mobile")
+            password = cached_data.get("password")
             email = cached_data.get("email")
             first_name = cached_data.get("first_name")
             last_name = cached_data.get("last_name")
@@ -137,12 +137,14 @@ class FullProfileViewSet(viewsets.GenericViewSet):
     
     def list(self, request):
         user = request.user
-
         profile_data = ProfileSerializer(user).data
+
         favorites = Favorite.objects.filter(user=user)
         favorites_data = FavoriteSerializer(favorites, many=True).data
+
         orders = Order.objects.filter(user=user)
         orders_data = OrderSerializer(orders, many=True).data
+        
         orders_items_data = {}
         for order in orders:
             orders_items_data[order.id] = OrderItemSerializer(order.items.all(), many=True).data
