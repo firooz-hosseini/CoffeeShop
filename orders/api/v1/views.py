@@ -1,5 +1,5 @@
 from rest_framework import viewsets,permissions
-from .serializers import OrderSerializer,CommentSerializer,RatingSerializer
+from .serializers import OrderSerializer,CommentSerializer,RatingSerializer,NotificationSerializer
 from orders.models import Order,Notification,Comment,Rating
 from django.contrib.auth import get_user_model
 
@@ -38,3 +38,10 @@ class RatingViewSet(viewsets.ModelViewSet):
     
     def perform_create(self, serializer):
         return serializer.save(user = self.request.user)
+    
+    class NotificationViewSet(viewsets.ReadOnlyModelViewSet):
+        serializer_class = NotificationSerializer
+        permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        return Notification.objects.all()
