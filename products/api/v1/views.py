@@ -32,12 +32,19 @@ class ProductViewSet(viewsets.ModelViewSet):
         product = self.get_object()
         files = request.FILES.getlist('images')
         is_main_flags = request.data.getlist('is_main')
+        replace = request.data.get('replace', 'false').lower() == 'true'
 
         if not files:
             return Response({'error': 'No images uploaded'}, status=400)
 
+        if replace:
+            product.image_product.all().delete()
+            main_found = False
+        else:
+            main_found = product.image_product.filter(is_main=True).exists()
+
+
         created_images = []
-        main_found = False
         for i, img_file in enumerate(files):
             is_main = is_main_flags[i].lower() == 'true' if i < len(is_main_flags) else False
             if is_main:
