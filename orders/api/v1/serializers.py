@@ -10,7 +10,7 @@ class OrderItemSerializer(serializers.ModelSerializer):
     product_category = serializers.CharField(source="product.category.title",read_only=True)
     class Meta:
         model = OrderItem
-        fields = ['id', 'product', 'product_title', 'product_price', 'quantity','product_image','product_stock','product_category',]
+        fields = ['id', 'product', 'product_title', 'product_price', 'quantity','product_image','product_category', 'product_quantity']
 
 class OrderSerializer(serializers.ModelSerializer):
     items = OrderItemSerializer(many=True,read_only=True)
@@ -24,9 +24,10 @@ class OrderSerializer(serializers.ModelSerializer):
 class CommentSerializer(serializers.ModelSerializer):
     purchased_before = serializers.ReadOnlyField()
     is_approved = serializers.SerializerMethodField()
+    verified_buyer = serializers.SerializerMethodField()
     class Meta:
         model = Comment
-        fields = "__all__"
+        fields = ['id', 'user', 'product', 'text', 'time','is_approved', 'purchased_before', 'verified_buyer']
         read_only_fields = ['user', 'time', 'is_approved', 'purchased_before', 'verified_buyer']
 
     def get_verified_buyer(self, obj):
