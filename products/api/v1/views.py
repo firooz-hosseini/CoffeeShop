@@ -1,7 +1,7 @@
 from rest_framework import viewsets, permissions, status
 from rest_framework.decorators import action
 from rest_framework.parsers import MultiPartParser
-from .permissions import IsOwnerOrAuthenticated
+from rest_framework.permissions import IsAuthenticated
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import SearchFilter, OrderingFilter
 from products.models import Product, Category, Favorite, Image
@@ -65,7 +65,7 @@ class CategoryViewSet(viewsets.ReadOnlyModelViewSet):
     
 
 class FavoriteViewSet(viewsets.ViewSet):
-    permission_classes = [IsOwnerOrAuthenticated]
+    permission_classes = [IsAuthenticated]
 
     def list(self, request):
         queryset = Favorite.objects.filter(user=request.user).select_related('product')
@@ -90,6 +90,6 @@ class FavoriteViewSet(viewsets.ViewSet):
         try:
             favorite = Favorite.objects.get(user=request.user, product_id=pk)
             favorite.delete()
-            return Response(status=status.HTTP_204_NO_CONTENT)
+            return Response({'detail': 'Deleted successfully.'}, status=status.HTTP_204_NO_CONTENT)
         except Favorite.DoesNotExist:
             return Response({'detail': 'Favorite not found.'}, status=status.HTTP_404_NOT_FOUND)
