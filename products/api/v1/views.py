@@ -26,12 +26,12 @@ class ProductViewSet(viewsets.ModelViewSet):
     ordering = ['id']
 
     def get_permissions(self):
-        if self.action in ['create', 'update', 'partial_update', 'destroy']:
+        if self.action in ['create', 'update', 'partial_update', 'destroy', 'upload_image']:
             permission_classes = [permissions.IsAdminUser]
         else:
             permission_classes = [permissions.AllowAny]
         return [permission() for permission in permission_classes]
-    
+        
     @action(detail=True, methods=['post'], parser_classes=[MultiPartParser])
     def upload_image(self, request, id=None):
         product = self.get_object()
