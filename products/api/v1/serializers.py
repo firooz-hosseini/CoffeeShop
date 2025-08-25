@@ -50,9 +50,10 @@ class FavoriteSerializer(serializers.ModelSerializer):
 
 
 class CommentSerializer(serializers.ModelSerializer):
+    
     class Meta:
         model = Comment
-        fields = ['id', 'user', 'product', 'text', 'is_approved']
+        fields = ['id', 'product', 'text', 'is_approved']
         read_only = ['id', 'is_approved']
 
     def validate(self, data):
