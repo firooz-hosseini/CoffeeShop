@@ -37,7 +37,9 @@ class CommentSerializer(serializers.ModelSerializer):
         model = Comment
         fields = ['id', 'user', 'product', 'text', 'time','is_approved', 'purchased_before', 'verified_buyer']
         read_only_fields = ['user', 'time', 'is_approved', 'purchased_before', 'verified_buyer']
-
+    
+    def get_is_approved(self, obj):
+        return obj.is_approved
     def get_verified_buyer(self, obj):
         return "Buyer approved"if obj.purchased_before else "buyer dont approved"
     
