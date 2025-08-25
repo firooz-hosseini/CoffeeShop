@@ -4,9 +4,15 @@ from rest_framework.parsers import MultiPartParser
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework.filters import SearchFilter, OrderingFilter
 from rest_framework.response import Response
+from rest_framework.pagination import PageNumberPagination
 from django_filters.rest_framework import DjangoFilterBackend
 from products.models import Product, Category, Favorite, Image
-from .serializers import ProductSerializer, FavoriteSerializer,CategorySerializer, ImageSerializer
+from .serializers import ProductSerializer, FavoriteSerializer,CategorySerializer, ImageSerializer, CommentSerializer, CommentListSerializer
+
+class CommentPagination(PageNumberPagination):
+    page_size = 5
+    page_size_query_param = 'page_size'
+    max_page_size = 50
 
 
 class ProductViewSet(viewsets.ModelViewSet):
@@ -42,7 +48,6 @@ class ProductViewSet(viewsets.ModelViewSet):
         else:
             main_found = product.image_product.filter(is_main=True).exists()
 
-
         created_images = []
         for i, img_file in enumerate(files):
             is_main = is_main_flags[i].lower() == 'true' if i < len(is_main_flags) else False
@@ -56,6 +61,26 @@ class ProductViewSet(viewsets.ModelViewSet):
 
         serializer = ImageSerializer(created_images, many=True)
         return Response(serializer.data, status=201)
+    
+    @action(detail=True, methods=['post'], serializer_class=CommentSerializer, permission_classes=[permissions.IsAuthenticated])
+    def add_comment(self, request, id=None):
+        product = self.get_object()
+        serializer = CommentSerializer(
+            data=request.data, 
+            context={'request': request, 'product': product}
+        )
+        serializer.is_valid(raise_exception=True)
+        serializer.save(product=product, user=request.user)
+        return Response(serializer.data)
+    
+    @action(detail=True, methods=['get'], permission_classes=[permissions.AllowAny])
+    def comments(self, request, id=None):
+        product = self.get_object()
+        queryset = product.Comment_product.filter(is_approved=True).order_by('-time')
+        paginator = CommentPagination()
+        page = paginator.paginate_queryset(queryset, request)
+        serializer = CommentListSerializer(page, many=True)
+        return paginator.get_paginated_response(serializer.data)
 
 
 class CategoryViewSet(viewsets.ReadOnlyModelViewSet):

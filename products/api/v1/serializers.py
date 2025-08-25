@@ -1,5 +1,6 @@
 from rest_framework import serializers
-from products.models import Product,Category,Image, Favorite, Ingredient
+from products.models import Product, Category, Image, Favorite, Ingredient
+from orders.models import Comment, OrderItem
 
 
 class CategorySerializer(serializers.ModelSerializer):
@@ -12,7 +13,6 @@ class ImageSerializer(serializers.ModelSerializer):
     class Meta:
         model = Image
         fields = ['id', 'image', 'is_main']
-
 
 
 class IngredientField(serializers.PrimaryKeyRelatedField):
@@ -47,3 +47,31 @@ class FavoriteSerializer(serializers.ModelSerializer):
     class Meta:
         model = Favorite
         fields = ['id', 'product']
+
+
+class CommentSerializer(serializers.ModelSerializer):
+    
+    class Meta:
+        model = Comment
+        fields = ['id', 'product', 'text', 'is_approved']
+        read_only = ['id', 'is_approved']
+
+    def validate(self, data):
+        user = self.context['request'].user
+        product = data['product']
+
+        if not OrderItem.objects.filter(order__user=user, product=product).exists():
+            raise serializers.ValidationError('You can only leave comments for products you have purchased.')
+        return data
+    
+    def create(self, validated_data):
+        validated_data['user'] = self.context['request'].user
+        return super().create(validated_data)
+    
+
+class CommentListSerializer(serializers.ModelSerializer):
+    user = serializers.StringRelatedField()
+
+    class Meta:
+        model = Comment
+        fields = ['id', 'user', 'text', 'time']

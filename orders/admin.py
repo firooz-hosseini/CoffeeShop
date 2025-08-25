@@ -1,5 +1,4 @@
 from django.contrib import admin, messages
-from django.core.cache import cache
 
 from .models import Comment, Notification, Order, OrderItem, Rating
 
@@ -11,17 +10,12 @@ class OrderItemInline(admin.TabularInline):
 
 @admin.register(Order)
 class OrderAdmin(admin.ModelAdmin):
-
-
     list_display = ['user', 'time', 'status', 'seen_by_admin']
     list_filter = ['time', 'items__product__category', 'status', 'seen_by_admin']
     search_fields = ['user__first_name', 'user__last_name', 'user__username']
     list_editable = ['status']
     
     inlines = [OrderItemInline]
-
-
-
 
     def changelist_view(self, request, extra_context=None):
         new_orders = Order.objects.filter(seen_by_admin=False)
@@ -36,7 +30,6 @@ class OrderAdmin(admin.ModelAdmin):
         obj.seen_by_admin = True
         super().save_model(request, obj, form, change)
     
-
 
 @admin.register(OrderItem)
 class OrderItemAdmin(admin.ModelAdmin):
@@ -76,4 +69,3 @@ class NotificationAdmin(admin.ModelAdmin):
     search_fields = ('message',)
     ordering = ('-created_at',)
     actions = [mark_as_read]
-
