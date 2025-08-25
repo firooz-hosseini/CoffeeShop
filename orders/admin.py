@@ -1,5 +1,4 @@
 from django.contrib import admin, messages
-from django.core.cache import cache
 
 from .models import Comment, Notification, Order, OrderItem, Rating
 
