@@ -5,13 +5,21 @@ from products.models import Product
 class OrderItemSerializer(serializers.ModelSerializer):
     product_title = serializers.ReadOnlyField(source="product.title")
     product_price = serializers.ReadOnlyField(source="product.price")
-    product_image = serializers.ImageField(source="product.image",read_only=True)
+    product_image = serializers.SerializerMethodField()
     product_quantity = serializers.ReadOnlyField(source="product.quantity")
     product_category = serializers.CharField(source="product.category.title",read_only=True)
     class Meta:
         model = OrderItem
         fields = ['id', 'product', 'product_title', 'product_price', 'quantity','product_image','product_category', 'product_quantity']
-
+    def get_product_image(self, obj):
+        main_image = obj.product.image_product.filter(is_main=True).first()
+        if main_image:
+            request = self.context.get('request')
+            url = main_image.image.url
+            if request is not None:
+                return request.build_absolute_uri(url)
+            return url
+        return None
 class OrderSerializer(serializers.ModelSerializer):
     items = OrderItemSerializer(many=True,read_only=True)
     total_price = serializers.ReadOnlyField()
