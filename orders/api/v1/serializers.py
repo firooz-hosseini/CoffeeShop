@@ -38,3 +38,9 @@ class RatingSerializer(serializers.ModelSerializer):
         model = Rating
         fields = ['id','user','product','score']
         read_only_fields = ['user']
+
+class NotificationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Notification
+        fields = ['id', 'message', 'is_read', 'created_at']
+        read_only_fields = ['message', 'created_at']
