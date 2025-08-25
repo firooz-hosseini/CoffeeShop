@@ -1,9 +1,7 @@
 from rest_framework import viewsets,permissions
 from .serializers import OrderSerializer,CommentSerializer,RatingSerializer,NotificationSerializer
 from orders.models import Order,Notification,Comment,Rating
-from django.contrib.auth import get_user_model
-
-User = get_user_model()
+from accounts.models import CustomUser
 
 class OrderViewSet(viewsets.ModelViewSet):
     serializer_class = OrderSerializer
@@ -14,7 +12,7 @@ class OrderViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         order = serializer.save(user=self.request.user)
-        admins = User.objects.filter(is_staff=True)
+        admins = CustomUser.objects.filter(is_staff=True)
         for admin in admins:
             Notification.objects.create(message=f"new order by{self.request.user.first_name}")
         return order
@@ -44,4 +42,6 @@ class NotificationViewSet(viewsets.ReadOnlyModelViewSet):
     permission_classes = [permissions.IsAuthenticated]
 
     def get_queryset(self):
-        return Notification.objects.all()
+        if self.request.user.is_staff:
+            return Notification.objects.all()
+        return Notification.objects.none()
