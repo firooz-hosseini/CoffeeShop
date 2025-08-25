@@ -1,19 +1,18 @@
 from rest_framework import viewsets, permissions, status
 from rest_framework.decorators import action
 from rest_framework.parsers import MultiPartParser
-from rest_framework.permissions import IsAuthenticated
-from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework.filters import SearchFilter, OrderingFilter
-from products.models import Product, Category, Favorite, Image
 from rest_framework.response import Response
+from django_filters.rest_framework import DjangoFilterBackend
+from products.models import Product, Category, Favorite, Image
 from .serializers import ProductSerializer, FavoriteSerializer,CategorySerializer, ImageSerializer
-from rest_framework.permissions import IsAdminUser
+
 
 class ProductViewSet(viewsets.ModelViewSet):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
     lookup_field = 'id'
-    permission_classes = [IsAdminUser]
     filter_backends = [SearchFilter, DjangoFilterBackend, OrderingFilter]
     search_fields = ['title', '^title','description', 'quantity', 'tags']
     filterset_fields = ['category']
@@ -21,12 +20,12 @@ class ProductViewSet(viewsets.ModelViewSet):
     ordering = ['id']
 
     def get_permissions(self):
-        if self.action in ['create', 'update', 'partial_update', 'destroy']:
+        if self.action in ['create', 'update', 'partial_update', 'destroy', 'upload_image']:
             permission_classes = [permissions.IsAdminUser]
         else:
             permission_classes = [permissions.AllowAny]
         return [permission() for permission in permission_classes]
-    
+        
     @action(detail=True, methods=['post'], parser_classes=[MultiPartParser])
     def upload_image(self, request, id=None):
         product = self.get_object()
