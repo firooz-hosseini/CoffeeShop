@@ -5,6 +5,6 @@ router = DefaultRouter()
 router.register('order',OrderViewSet,basename='order')
 router.register('comment',CommentViewSet,basename='comment')
 router.register('rating',RatingViewSet,basename='rating')
-router.register('notification',NotificationViewSet,basename='rating')
+router.register('notification',NotificationViewSet,basename='notification')
 
 urlpatterns = [router.urls]
