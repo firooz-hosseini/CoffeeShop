@@ -39,9 +39,9 @@ class RatingViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         return serializer.save(user = self.request.user)
     
-    class NotificationViewSet(viewsets.ReadOnlyModelViewSet):
-        serializer_class = NotificationSerializer
-        permission_classes = [permissions.IsAuthenticated]
+class NotificationViewSet(viewsets.ReadOnlyModelViewSet):
+    serializer_class = NotificationSerializer
+    permission_classes = [permissions.IsAuthenticated]
 
     def get_queryset(self):
         return Notification.objects.all()
