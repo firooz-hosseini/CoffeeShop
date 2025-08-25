@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from accounts.models import CustomUser
 from products.models import Favorite
-from orders.models import Order, OrderItem
+from orders.models import Order, CartItem
 
 
 class SignUpSerializer(serializers.ModelSerializer):
@@ -44,8 +44,8 @@ class OrderSerializer(serializers.ModelSerializer):
 
 
 
-class OrderItemSerializer(serializers.ModelSerializer):
+class CartItemSerializer(serializers.ModelSerializer):
     product_title = serializers.CharField(source='product.title', read_only=True)
     class Meta:
-        model = OrderItem
+        model = CartItem
         fields = ['id', 'product', 'product_title', 'quantity']

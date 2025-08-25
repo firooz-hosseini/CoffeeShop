@@ -54,7 +54,7 @@
 
     <div class="mb-6">
     {% if product.quantity > 0 %}
-      <form method="post" action="{% url 'create_order' product.pk %}" class="flex items-center gap-4 max-w-xs">
+      <form method="post" action="{% url 'add_to_cart' product.pk %}" class="flex items-center gap-4 max-w-xs">
         {% csrf_token %}
         <label for="quantity" class="sr-only">Quantity</label>
         <input 

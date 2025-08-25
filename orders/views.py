@@ -9,19 +9,19 @@ from django.views.generic.edit import CreateView
 
 from products.models import Product
 
-from .forms import CreateOrderItemForm
-from .models import Comment, Notification, Order, OrderItem, Rating
+from .forms import AddToCartForm
+from .models import Comment, Notification, Order, CartItem, Rating,Cart
 
 
-class CreateOrderView(LoginRequiredMixin, View):
+class AddToCartView(LoginRequiredMixin, View):
     def get(self, request, product_id):
         product = get_object_or_404(Product, id=product_id)
         if product.quantity <= 0:
             messages.error(request,'This product is out of stock.')
-            return redirect('product-detail',pk=product.pk)
+            return redirect('product-detail', pk=product.pk)
         
-        form = CreateOrderItemForm()
-        return render(request, 'order/create_order.html', {'product': product, 'form': form})
+        form = AddToCartForm()
+        return render(request, 'order/add_to_cart.html', {'form': form, 'product': product})
 
     def post(self, request, product_id):
         product = get_object_or_404(Product, id=product_id)
@@ -29,39 +29,61 @@ class CreateOrderView(LoginRequiredMixin, View):
             messages.error(request, "This product is out of stock.")
             return redirect('product-detail', pk=product.pk)
 
-        form = CreateOrderItemForm(request.POST)
+        form = AddToCartForm(request.POST)
         if form.is_valid():
             quantity = form.cleaned_data['quantity']
             if quantity > product.quantity:
                 messages.error(request, f"Only {product.quantity} items are available.")
                 return redirect('product-detail', pk=product.pk)
 
-            order = Order.objects.create(user=request.user)
-            OrderItem.objects.create(order=order, product=product, quantity=quantity)
-
-            product.quantity -= quantity
-            product.save()
+            cart, created = Cart.objects.get_or_create(user=request.user, is_paid=False)
+            cart_item, created_item = CartItem.objects.get_or_create(
+                cart=cart,
+                product=product,
+                defaults={'quantity': quantity}
+            )
+            if not created_item:
+                cart_item.quantity += quantity
+                cart_item.save()
             
-            Notification.objects.create(message=f'New order by {request.user.mobile} for {quantity} x {product.title}')
-            messages.success(request, f'{quantity} {product.title} is added to your order.')
+            messages.success(request, f"{quantity} x {product.title} added to your cart.")
 
-            return redirect('product-detail', pk=product.pk)
-        return render(request, 'product_detail.html', {'product': product, 'form': form})
+            return redirect('cart_detail')  
+        return redirect('product-detail', pk=product.pk)
 
+@login_required
+def cart_detail(request):
+    cart, created = Cart.objects.get_or_create(user=request.user, is_paid=False)
+    return render(request, 'order/cart_detail.html', {'cart': cart})
 
-class OrderListView(LoginRequiredMixin, ListView):
-    model = Order
-    context_object_name = 'orders'
-    template_name = 'order/order_list.html'
+@login_required
+def remove_cart_item(request, item_id):
+    item = get_object_or_404(CartItem, pk=item_id, cart__user=request.user)
+    item.delete()
+    messages.success(request, "Item removed from cart.")
+    return redirect('cart_detail')
+@login_required
+def checkout(request):
+    cart = get_object_or_404(Cart, user=request.user, is_paid=False)
+    if not cart.items.exists():
+        messages.error(request, "Your cart is empty.")
+        return redirect('cart_detail')
 
-    def get_queryset(self):
-        return Order.objects.filter(user=self.request.user, status='pending').prefetch_related('items__product__image_product')
-    
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        orders = context['orders']
-        context['total_all_orders'] = sum(order.total_price for order in orders)
-        return context
+    if request.method == 'POST':
+        cart.is_paid = True
+        cart.save()
+
+        order = Order.objects.create(user=request.user, cart=cart, status='paid')
+        Notification.objects.create(message=f"New order by {request.user.first_name}")
+        messages.success(request, "Order placed successfully!")
+        return redirect('order_list')
+
+    return render(request, 'order/checkout.html', {'cart': cart})
+
+@login_required
+def order_list(request):
+    orders = Order.objects.filter(user=request.user).prefetch_related('cart__items__product')
+    return render(request, 'order/order_list.html', {'orders': orders})
 
 @login_required
 def cancel_order_view(request, order_id):
@@ -78,7 +100,7 @@ def cancel_order_view(request, order_id):
 @login_required
 def order_list(request):
     orders = Order.objects.all()
-    return render(request, 'order_list.html', {'orders':orders})
+    return render(request, 'order/order_list.html', {'orders':orders})
  
 @login_required
 def delete_order_view(request, order_id):

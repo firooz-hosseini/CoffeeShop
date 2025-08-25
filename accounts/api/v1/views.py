@@ -1,7 +1,7 @@
 from rest_framework import viewsets, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
-from .serializers import LoginSerializer, SignUpSerializer, VerifyOtpSerializer, ProfileSerializer, FavoriteSerializer, OrderSerializer, OrderItemSerializer
+from .serializers import LoginSerializer, SignUpSerializer, VerifyOtpSerializer, ProfileSerializer, FavoriteSerializer, OrderSerializer, CartItemSerializer
 from accounts.models import CustomUser
 from products.models import Favorite
 from orders.models import Order
@@ -145,7 +145,7 @@ class FullProfileViewSet(viewsets.GenericViewSet):
         orders_data = OrderSerializer(orders, many=True).data
         orders_items_data = {}
         for order in orders:
-            orders_items_data[order.id] = OrderItemSerializer(order.items.all(), many=True).data
+            orders_items_data[order.id] = CartItemSerializer(order.items.all(), many=True).data
 
         return Response({
             "profile": profile_data,
@@ -207,7 +207,7 @@ class OrderViewSet(viewsets.GenericViewSet):
     def items_order(self, request, pk=None):
         try:
             order = Order.objects.get(pk=pk, user=request.user)
-            serializer = OrderItemSerializer(order.items.all(), many=True)
+            serializer = CartItemSerializer(order.items.all(), many=True)
             return Response(serializer.data)
         except Order.DoesNotExist:
             return Response({"detail": "Order not found"}, status=404)

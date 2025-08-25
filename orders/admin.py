@@ -1,11 +1,11 @@
 from django.contrib import admin, messages
 from django.core.cache import cache
 
-from .models import Comment, Notification, Order, OrderItem, Rating
+from .models import Comment, Notification, Order, CartItem, Rating
 
 
-class OrderItemInline(admin.TabularInline):
-    model = OrderItem
+class CartItemInline(admin.TabularInline):
+    model = CartItem
     extra = 1
 
 
@@ -14,11 +14,10 @@ class OrderAdmin(admin.ModelAdmin):
 
 
     list_display = ['user', 'time', 'status', 'seen_by_admin']
-    list_filter = ['time', 'items__product__category', 'status', 'seen_by_admin']
+    list_filter = ['time','status', 'seen_by_admin']
     search_fields = ['user__first_name', 'user__last_name', 'user__username']
     list_editable = ['status']
     
-    inlines = [OrderItemInline]
 
 
 
@@ -38,10 +37,10 @@ class OrderAdmin(admin.ModelAdmin):
     
 
 
-@admin.register(OrderItem)
-class OrderItemAdmin(admin.ModelAdmin):
-    list_display = ['order', 'product', 'quantity']
-    search_fields = ['product__title', 'order__user__first_name']
+@admin.register(CartItem)
+class CartItemAdmin(admin.ModelAdmin):
+    list_display = ['cart', 'product', 'quantity']
+    search_fields = ['product__title']
 
 
 @admin.register(Comment)

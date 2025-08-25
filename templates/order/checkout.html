@@ -1,0 +1,31 @@
+{% load static %}
+
+{% block content %}
+<div class="max-w-3xl mx-auto p-6 mt-10 bg-yellow-50 rounded-xl shadow-lg">
+
+    <h2 class="text-3xl font-bold mb-6 text-amber-900 text-center">Checkout</h2>
+
+    <div class="mb-6 text-center">
+        <p class="text-lg">Total price:</p>
+        <p class="text-2xl font-bold text-green-700">{{ cart.total_price|floatformat:0 }} Toman</p>
+    </div>
+
+    <p class="text-gray-700 mb-6 text-center">Please confirm your order to proceed.</p>
+
+    <form method="post" class="flex justify-center mb-6">
+        {% csrf_token %}
+        <button type="submit" 
+                class="bg-green-500 hover:bg-green-600 text-white font-semibold px-6 py-2 rounded-lg shadow transition duration-200">
+            Confirm & Pay
+        </button>
+    </form>
+
+    <div class="text-center">
+        <a href="{% url 'cart_detail' %}" 
+           class="text-blue-600 hover:underline font-medium">
+           ← Back to Cart
+        </a>
+    </div>
+
+</div>
+{% endblock %}

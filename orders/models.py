@@ -3,6 +3,17 @@ from django.db import models
 from accounts.models import CustomUser
 from products.models import Product
 
+class Cart(models.Model):
+    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, related_name="order")
+    created_at = models.DateTimeField(auto_now_add=True)
+    is_paid = models.BooleanField(default=False)  
+
+    def __str__(self):
+        return f"Cart of {self.user.first_name} - Paid: {self.is_paid}"
+
+    @property
+    def total_price(self):
+        return sum(item.product.price * item.quantity for item in self.items.all())
 
 class Order(models.Model):
     STATUS_CHOICES = [
@@ -14,12 +25,12 @@ class Order(models.Model):
 
     user = models.ForeignKey(CustomUser,on_delete=models.CASCADE,related_name='order_user')
     time = models.DateTimeField(auto_now_add=True)
-
+    cart = models.OneToOneField(Cart,on_delete=models.CASCADE,related_name='cart',null=True,blank=True)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
     seen_by_admin = models.BooleanField(default=False)
     @property
     def total_price(self):
-        return sum((item.product.price * item.quantity for item in self.items.all()))
+        return self.cart.total_price
     
     def mark_as_delivered(self):
         if self.status != 'pending':
@@ -37,8 +48,8 @@ class Order(models.Model):
         return f'{self.user.first_name} at {self.time} ordered'
 
     
-class OrderItem(models.Model):
-    order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name='items')
+class CartItem(models.Model):
+    cart = models.ForeignKey(Cart, on_delete=models.CASCADE, related_name='items')
     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='order_item_product')
     quantity = models.PositiveIntegerField()
 
@@ -54,7 +65,7 @@ class Comment(models.Model):
 
     @property
     def purchased_before(self):
-        return OrderItem.objects.filter(order__user=self.user, product=self.product).exists()
+        return CartItem.objects.filter(cart__user=self.user, product=self.product, cart__is_paid=True).exists()
 
     def __str__(self):
         return f'User: {self.user.first_name}, Product: {self.product.title}, Text: {self.text}'

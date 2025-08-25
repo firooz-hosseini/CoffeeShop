@@ -1,11 +1,11 @@
 from django import forms
 
-from .models import Comment, OrderItem
+from .models import Comment, CartItem
 
 
-class CreateOrderItemForm(forms.ModelForm):
+class AddToCartForm(forms.ModelForm):
     class Meta:
-        model = OrderItem
+        model = CartItem
         fields = ['quantity']
 
 
