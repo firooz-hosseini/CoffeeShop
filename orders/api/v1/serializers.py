@@ -32,3 +32,9 @@ class CommentSerializer(serializers.ModelSerializer):
 
     def get_verified_buyer(self, obj):
         return "Buyer approved"if obj.purchased_before else "buyer dont approved"
+    
+class RatingSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Rating
+        fields = ['id','user','product','score']
+        read_only_fields = ['user']
