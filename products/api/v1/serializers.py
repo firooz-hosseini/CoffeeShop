@@ -75,3 +75,11 @@ class CommentListSerializer(serializers.ModelSerializer):
     class Meta:
         model = Comment
         fields = ['id', 'user', 'text', 'time']
+
+
+class ProductIngredientsSerializer(serializers.ModelSerializer):
+    ingredients = serializers.StringRelatedField(many=True, source='ingredient')
+
+    class Meta:
+        model = Product
+        fields = ['title', 'ingredients']
