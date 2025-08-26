@@ -1,12 +1,17 @@
 from rest_framework import serializers
 from orders.models import Order, OrderItem, Comment, Rating, Notification
-from products.models import Product
+from products.models import Product,Image
+
+class ImageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Image
+        fields = ["id", "image", "is_main"]
 
 class OrderItemSerializer(serializers.ModelSerializer):
     product_title = serializers.ReadOnlyField(source="product.title")
     product_price = serializers.ReadOnlyField(source="product.price")
-    product_image = serializers.SerializerMethodField()
-    product_quantity = serializers.ReadOnlyField(source="product.quantity")
+    product_image = ImageSerializer(source="product.image_product",many=True,read_only=True)
+    product_quantity = serializers.ReadOnlyField(source="product.quantity",read_only=True)
     product_category = serializers.CharField(source="product.category.title",read_only=True)
 
 
@@ -15,15 +20,6 @@ class OrderItemSerializer(serializers.ModelSerializer):
         fields = ['id', 'product', 'product_title', 'product_price', 'quantity','product_image','product_category', 'product_quantity']
 
 
-    def get_product_image(self, obj):
-        main_image = obj.product.image_product.filter(is_main=True).first()
-        if main_image:
-            request = self.context.get('request')
-            url = main_image.image.url
-            if request is not None:
-                return request.build_absolute_uri(url)
-            return url
-        return None
 
 
 class OrderSerializer(serializers.ModelSerializer):
