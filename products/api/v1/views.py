@@ -7,7 +7,7 @@ from rest_framework.response import Response
 from rest_framework.pagination import PageNumberPagination
 from django_filters.rest_framework import DjangoFilterBackend
 from products.models import Product, Category, Favorite, Image
-from .serializers import ProductSerializer, FavoriteSerializer,CategorySerializer, ImageSerializer, CommentSerializer, CommentListSerializer
+from .serializers import ProductSerializer, FavoriteSerializer,CategorySerializer, ImageSerializer, CommentSerializer, CommentListSerializer,ProductIngredientsSerializer
 
 class CommentPagination(PageNumberPagination):
     page_size = 5
@@ -118,3 +118,9 @@ class FavoriteViewSet(viewsets.ViewSet):
             return Response({'detail': 'Deleted successfully.'}, status=status.HTTP_204_NO_CONTENT)
         except Favorite.DoesNotExist:
             return Response({'detail': 'Favorite not found.'}, status=status.HTTP_404_NOT_FOUND)
+        
+class ProductIngredientsViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = Product.objects.all()
+    serializer_class = ProductIngredientsSerializer
+    permission_classes = [permissions.AllowAny]
+    lookup_field = 'pk'
