@@ -44,7 +44,7 @@ class OrderSerializer(serializers.ModelSerializer):
             quantity = item_data['quantity']
 
             if quantity > product.quantity:
-                raise serializers.ValidationError(f"{product.title} فقط {product.quantity} موجود است")
+                raise serializers.ValidationError(f"{product.title} just {product.quantity} is_available")
 
             OrderItem.objects.create(order=order, product=product, quantity=quantity)
             product.quantity -= quantity
