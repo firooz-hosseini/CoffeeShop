@@ -28,11 +28,9 @@ class CommentViewSet(viewsets.ModelViewSet):
         serializer.save(user=self.request.user)
 
 class RatingViewSet(viewsets.ModelViewSet):
+    queryset = Rating.objects.all()
     serializer_class = RatingSerializer
     permission_classes = [permissions.IsAuthenticated]
-
-    def get_queryset(self):
-        return Rating.objects.filter(user = self.request.user)
     
     def perform_create(self, serializer):
         return serializer.save(user = self.request.user)
@@ -45,3 +43,4 @@ class NotificationViewSet(viewsets.ReadOnlyModelViewSet):
         if self.request.user.is_staff:
             return Notification.objects.all()
         return Notification.objects.none()
+    
