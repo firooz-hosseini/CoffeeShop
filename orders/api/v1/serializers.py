@@ -2,6 +2,11 @@ from rest_framework import serializers
 from orders.models import Order, OrderItem, Comment, Rating, Notification
 from products.models import Product,Image
 
+class OrderItemInputSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = OrderItem
+        fields = ['product', 'quantity']
+
 class ImageSerializer(serializers.ModelSerializer):
     class Meta:
         model = Image
@@ -25,11 +30,26 @@ class OrderItemSerializer(serializers.ModelSerializer):
 class OrderSerializer(serializers.ModelSerializer):
     items = OrderItemSerializer(many=True,read_only=True)
     total_price = serializers.ReadOnlyField()
+    create_items = OrderItemInputSerializer(many=True, write_only=True)
 
     class Meta:
         model = Order
-        fields = ['id', 'user', 'status', 'time', 'items', 'total_price']
+        fields = ['id', 'user', 'status', 'time', 'items', 'total_price','create_items']
         read_only_fields = ['user', 'status', 'time']
+    def create(self, validated_data):
+        items_data = validated_data.pop('create_items')
+        order = Order.objects.create(user=self.context['request'].user, **validated_data)
+        for item_data in items_data:
+            product = item_data['product']
+            quantity = item_data['quantity']
+
+            if quantity > product.quantity:
+                raise serializers.ValidationError(f"{product.title} فقط {product.quantity} موجود است")
+
+            OrderItem.objects.create(order=order, product=product, quantity=quantity)
+            product.quantity -= quantity
+            product.save()
+        return order
 
 class CommentSerializer(serializers.ModelSerializer):
     purchased_before = serializers.ReadOnlyField()
