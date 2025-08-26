@@ -17,6 +17,8 @@ class Order(models.Model):
 
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
     seen_by_admin = models.BooleanField(default=False)
+
+    
     @property
     def total_price(self):
         return sum((item.product.price * item.quantity for item in self.items.all()))

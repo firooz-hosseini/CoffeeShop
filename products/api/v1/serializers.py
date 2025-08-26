@@ -34,6 +34,7 @@ class ProductSerializer(serializers.ModelSerializer):
     category_id = serializers.PrimaryKeyRelatedField(queryset=Category.objects.all(), source="category", write_only=True)
     image = ImageSerializer(many=True, read_only=True, source='image_product') 
     is_available = serializers.BooleanField(read_only=True)
+    average_rating = serializers.ReadOnlyField()
     
 
     class Meta:
