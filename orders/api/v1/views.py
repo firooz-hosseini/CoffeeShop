@@ -11,7 +11,7 @@ class OrderViewSet(viewsets.ModelViewSet):
         return Order.objects.filter(user=self.request.user)
 
     def perform_create(self, serializer):
-        order = serializer.save(user=self.request.user)
+        order = serializer.save()
         admins = CustomUser.objects.filter(is_staff=True)
         for admin in admins:
             Notification.objects.create(message=f"new order by{self.request.user.first_name}")
