@@ -81,3 +81,18 @@ class NotificationSerializer(serializers.ModelSerializer):
         model = Notification
         fields = ['id', 'message', 'is_read', 'created_at']
         read_only_fields = ['message', 'created_at']
+
+class KitchenOrderItemSerializer(serializers.ModelSerializer):
+    product_title = serializers.CharField(source='product.title',read_only=True)
+
+    class Meta:
+        model = OrderItem
+        fields = ['product_title','quantity']
+
+class KitchenOrderSerializer(serializers.ModelSerializer):
+    items = KitchenOrderItemSerializer(many=True,read_only=True)
+    user_name = serializers.CharField(source='user.first_name')
+
+    class Meta:
+        model = Order
+        fields = ['user_name','items','time',]
