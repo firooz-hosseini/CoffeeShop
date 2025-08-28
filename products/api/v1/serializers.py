@@ -72,10 +72,14 @@ class CommentSerializer(serializers.ModelSerializer):
 
 class CommentListSerializer(serializers.ModelSerializer):
     user = serializers.StringRelatedField()
+    verified_purchase = serializers.SerializerMethodField()
 
     class Meta:
         model = Comment
-        fields = ['id', 'user', 'text', 'time']
+        fields = ['id', 'user', 'text', 'time', 'verified_purchase']
+
+    def get_verified_purchase(self, obj):
+        return OrderItem.objects.filter(order__user=obj.user, product=obj.product).exists()
 
 
 class ProductIngredientsSerializer(serializers.ModelSerializer):
