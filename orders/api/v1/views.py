@@ -34,6 +34,14 @@ class PaymentViewSet(viewsets.GenericViewSet):
         except Order.DoesNotExist:
             return Response({"detail": "Not found"}, status=status.HTTP_404_NOT_FOUND)
         
+    @action(detail=False,methods=['post'])
+    def payall(self,request):
+        
+        orders = Order.objects.filter(user=request.user,status='pending')
+        if orders.exists():
+            orders.update(status='paid')
+            return Response({"detail": "all orders successfully paid"}, status=status.HTTP_202_ACCEPTED)
+        return Response({'detail':'No pending order found'},status=status.HTTP_404_NOT_FOUND)
 
 
 class CommentViewSet(viewsets.ModelViewSet):
