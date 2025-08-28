@@ -33,9 +33,29 @@
     </div>
 
 
+
     <div class="flex gap-8 min-h-[300px] flex-col lg:flex-row">
 
-        <div class="w-full lg:w-5/6" style="min-height: 200px;">
+
+        <div class="w-full lg:w-1/6 order-1 lg:order-2">
+            <form method="get" class="bg-yellow-50 border border-amber-300 rounded p-4 shadow max-h-[300px] overflow-y-auto">
+                <h3 class="font-semibold text-amber-900 mb-4 text-center text-sm">Filter by Category</h3>
+                <select name="category" class="w-full mb-4 border border-gray-300 rounded p-2 text-sm">
+                    <option value="">All Categories</option>
+                    {% for cat in categories %}
+                        <option value="{{ cat.id }}" {% if request.GET.category == cat.id %}selected{% endif %}>
+                            {{ cat.title }}
+                        </option>
+                    {% endfor %}
+                </select>
+                <button type="submit" class="w-full bg-amber-600 hover:bg-amber-700 text-white py-1 px-3 rounded text-sm">
+                    Apply Filter
+                </button>
+            </form>
+        </div>
+
+ 
+        <div class="w-full lg:w-5/6 order-2 lg:order-1" style="min-height: 200px;">
             <h2 class="text-2xl font-bold text-amber-900 mb-6">My Products</h2>
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 h-full overflow-auto"> 
                 {% for product in products %}
@@ -56,27 +76,8 @@
                     
                 {% empty %}
                     <p class="text-gray-600 col-span-full text-center">No products available.</p>
-                    
                 {% endfor %}
-
             </div>
-        </div>
-
-        <div class="w-full lg:w-1/6 mt-6 lg:mt-0">
-            <form method="get" class="bg-yellow-50 border border-amber-300 rounded p-4 shadow max-h-[300px] overflow-y-auto">
-                <h3 class="font-semibold text-amber-900 mb-4 text-center text-sm">Filter by Category</h3>
-                <select name="category" class="w-full mb-4 border border-gray-300 rounded p-2 text-sm">
-                    <option value="">All Categories</option>
-                    {% for cat in categories %}
-                        <option value="{{ cat.id }}" {% if request.GET.category == cat.id %}selected{% endif %}>
-                            {{ cat.title }}
-                        </option>
-                    {% endfor %}
-                </select>
-                <button type="submit" class="w-full bg-amber-600 hover:bg-amber-700 text-white py-1 px-3 rounded text-sm">
-                    Apply Filter
-                </button>
-            </form>
         </div>
 
     </div>
