@@ -19,11 +19,10 @@ class OrderViewSet(viewsets.ModelViewSet):
         return order
 
 class CommentViewSet(viewsets.ModelViewSet):
+    queryset = Comment.objects.all()
     serializer_class = CommentSerializer
     permission_classes = [permissions.IsAuthenticated]
 
-    def get_queryset(self):
-        return Comment.objects.all()
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
@@ -46,9 +45,8 @@ class NotificationViewSet(viewsets.ReadOnlyModelViewSet):
         return Notification.objects.none()
     
 class KitchenOrderViewSet(viewsets.ModelViewSet):
+    queryset = Order.objects.filter(status='paid').order_by('time')
     serializer_class = KitchenOrderSerializer
     permission_classes = [IsKitchenStaff]
 
-    def get_queryset(self):
-        return Order.objects.filter(status='paid').order_by('time')
     
