@@ -1,8 +1,13 @@
-from rest_framework import viewsets,permissions
+from rest_framework import viewsets,permissions, status
 from .serializers import OrderSerializer,CommentSerializer,RatingSerializer,NotificationSerializer,KitchenOrderSerializer
 from orders.models import Order,Notification,Comment,Rating
 from accounts.models import CustomUser
 from .permissions import IsKitchenStaff
+from rest_framework.decorators import action
+from django.shortcuts import get_object_or_404
+from rest_framework.response import Response
+ 
+
 
 class OrderViewSet(viewsets.ModelViewSet):
     serializer_class = OrderSerializer
@@ -17,6 +22,20 @@ class OrderViewSet(viewsets.ModelViewSet):
         for admin in admins:
             Notification.objects.create(message=f"new order by{self.request.user.first_name}")
         return order
+    
+class PaymentViewSet(viewsets.GenericViewSet):
+
+    @action(detail=True, methods=['post'])
+    def pay(self, request, pk=None):
+        try:
+            order = Order.objects.get(pk=pk, user=request.user)
+            order.status = 'paid'
+            order.save()
+            return Response({"detail": "Order successfully paid"}, status=status.HTTP_202_ACCEPTED)
+        except Order.DoesNotExist:
+            return Response({"detail": "Not found"}, status=status.HTTP_404_NOT_FOUND)
+        
+
 
 class CommentViewSet(viewsets.ModelViewSet):
     queryset = Comment.objects.all()
