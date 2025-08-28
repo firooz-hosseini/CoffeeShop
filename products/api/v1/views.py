@@ -1,7 +1,8 @@
 from rest_framework import viewsets, permissions, status
 from rest_framework.decorators import action
 from rest_framework.parsers import MultiPartParser
-from rest_framework.permissions import IsAuthenticated, IsAdminUser
+from rest_framework.permissions import IsAuthenticated, IsAdminUser, AllowAny
+from .permissions import IsAuthenticatedWithMessage
 from rest_framework.filters import SearchFilter, OrderingFilter
 from rest_framework.response import Response
 from rest_framework.pagination import PageNumberPagination
@@ -27,9 +28,9 @@ class ProductViewSet(viewsets.ModelViewSet):
 
     def get_permissions(self):
         if self.action in ['create', 'update', 'partial_update', 'destroy', 'upload_image']:
-            permission_classes = [permissions.IsAdminUser]
+            permission_classes = [IsAdminUser]
         else:
-            permission_classes = [permissions.AllowAny]
+            permission_classes = [AllowAny]
         return [permission() for permission in permission_classes]
         
     @action(detail=True, methods=['post'], parser_classes=[MultiPartParser])
@@ -62,7 +63,7 @@ class ProductViewSet(viewsets.ModelViewSet):
         serializer = ImageSerializer(created_images, many=True)
         return Response(serializer.data, status=201)
     
-    @action(detail=True, methods=['post'], serializer_class=CommentSerializer, permission_classes=[permissions.IsAuthenticated])
+    @action(detail=True, methods=['post'], serializer_class=CommentSerializer, permission_classes=[IsAuthenticatedWithMessage])
     def add_comment(self, request, id=None):
         product = self.get_object()
         serializer = CommentSerializer(
