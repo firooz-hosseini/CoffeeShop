@@ -27,13 +27,21 @@ class PaymentViewSet(viewsets.GenericViewSet):
     @action(detail=True, methods=['post'])
     def pay(self, request, pk=None):
         try:
-            order = Order.objects.get(pk=pk, user=request.user)
+            order = Order.objects.get(pk=pk, user=request.user,status='pending')
             order.status = 'paid'
             order.save()
             return Response({"detail": "Order successfully paid"}, status=status.HTTP_202_ACCEPTED)
         except Order.DoesNotExist:
             return Response({"detail": "Not found"}, status=status.HTTP_404_NOT_FOUND)
         
+    @action(detail=False,methods=['post'])
+    def payall(self,request):
+        
+        orders = Order.objects.filter(user=request.user,status='pending')
+        if orders.exists():
+            orders.update(status='paid')
+            return Response({"detail": "all orders successfully paid"}, status=status.HTTP_202_ACCEPTED)
+        return Response({'detail':'No pending order found'},status=status.HTTP_404_NOT_FOUND)
 
 
 class RatingViewSet(viewsets.ModelViewSet):
