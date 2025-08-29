@@ -4,7 +4,6 @@ from orders.models import Order,Notification,Comment,Rating
 from accounts.models import CustomUser
 from .permissions import IsKitchenStaff
 from rest_framework.decorators import action
-from django.shortcuts import get_object_or_404
 from rest_framework.response import Response
  
 
@@ -36,15 +35,6 @@ class PaymentViewSet(viewsets.GenericViewSet):
             return Response({"detail": "Not found"}, status=status.HTTP_404_NOT_FOUND)
         
 
-
-class CommentViewSet(viewsets.ModelViewSet):
-    queryset = Comment.objects.all()
-    serializer_class = CommentSerializer
-    permission_classes = [permissions.IsAuthenticated]
-
-
-    def perform_create(self, serializer):
-        serializer.save(user=self.request.user)
 
 class RatingViewSet(viewsets.ModelViewSet):
     queryset = Rating.objects.all()
