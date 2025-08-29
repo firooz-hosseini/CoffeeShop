@@ -1,6 +1,6 @@
 from rest_framework import viewsets,permissions, status
-from .serializers import OrderSerializer,CommentSerializer,RatingSerializer,NotificationSerializer,KitchenOrderSerializer
-from orders.models import Order,Notification,Comment,Rating
+from .serializers import OrderSerializer,RatingSerializer,NotificationSerializer,KitchenOrderSerializer
+from orders.models import Order,Notification,Rating
 from accounts.models import CustomUser
 from .permissions import IsKitchenStaff
 from rest_framework.decorators import action
