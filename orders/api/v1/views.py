@@ -61,7 +61,7 @@ class NotificationViewSet(viewsets.ReadOnlyModelViewSet):
             return Notification.objects.all()
         return Notification.objects.none()
     
-class KitchenOrderViewSet(viewsets.ReadOnlyModelViewSet):
+class KitchenOrderViewSet(viewsets.ModelViewSet):
     queryset = Order.objects.filter(status='paid').order_by('time')
     serializer_class = KitchenOrderSerializer
     permission_classes = [IsKitchenStaff]
