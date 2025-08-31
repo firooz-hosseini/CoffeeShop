@@ -1,5 +1,5 @@
 from rest_framework.routers import DefaultRouter
-from .views import OrderViewSet,CommentViewSet,RatingViewSet,NotificationViewSet,KitchenOrderViewSet, PaymentViewSet
+from .views import OrderViewSet,RatingViewSet,NotificationViewSet,KitchenOrderViewSet, PaymentViewSet
 from django.urls import path,include
 
 router = DefaultRouter()

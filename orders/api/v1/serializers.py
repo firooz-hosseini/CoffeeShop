@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from orders.models import Order, OrderItem, Comment, Rating, Notification
-from products.models import Product,Image
+from products.models import Image
 
 class OrderItemInputSerializer(serializers.ModelSerializer):
     class Meta:

@@ -1,6 +1,6 @@
 from rest_framework import viewsets,permissions, status
-from .serializers import OrderSerializer,CommentSerializer,RatingSerializer,NotificationSerializer,KitchenOrderSerializer
-from orders.models import Order,Notification,Comment,Rating
+from .serializers import OrderSerializer,RatingSerializer,NotificationSerializer,KitchenOrderSerializer
+from orders.models import Order,Notification,Rating
 from accounts.models import CustomUser
 from .permissions import IsKitchenStaff
 from rest_framework.decorators import action
@@ -61,7 +61,7 @@ class NotificationViewSet(viewsets.ReadOnlyModelViewSet):
             return Notification.objects.all()
         return Notification.objects.none()
     
-class KitchenOrderViewSet(viewsets.ModelViewSet):
+class KitchenOrderViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Order.objects.filter(status='paid').order_by('time')
     serializer_class = KitchenOrderSerializer
     permission_classes = [IsKitchenStaff]
