@@ -59,10 +59,8 @@ class CommentSerializer(serializers.ModelSerializer):
 
     def validate(self, data):
         user = self.context['request'].user
-        product = data['product']
-
-        if not OrderItem.objects.filter(order__user=user, product=product).exists():
-            raise serializers.ValidationError('You can only leave comments for products you have purchased.')
+        if not user.is_authenticated:
+            raise serializers.ValidationError('To submit a comment, you must log in to your account.')
         return data
     
     def create(self, validated_data):
