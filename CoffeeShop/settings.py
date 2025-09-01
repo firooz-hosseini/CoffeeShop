@@ -218,10 +218,10 @@ STORAGES = {
             "bucket_name": os.getenv("AWS_STORAGE_BUCKET_NAME"),
             "endpoint_url": os.getenv("AWS_S3_ENDPOINT_URL"),
             "region_name": os.getenv("AWS_S3_REGION_NAME"),
-            "addressing_style": "path",     # مخصوص آروان
-            "signature_version": "s3v4",    # الزامی برای آروان
-            "default_acl": None,            # فایل‌ها private بشن
-            "file_overwrite": False,        # تکراری بودن اسم رو overwrite نکن
+            "addressing_style": "path",   
+            "signature_version": "s3v4",  
+            "default_acl": None,          
+            "file_overwrite": False,        
             },
         },
 
