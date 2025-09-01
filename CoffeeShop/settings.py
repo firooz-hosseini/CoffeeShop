@@ -47,6 +47,8 @@ INSTALLED_APPS = [
     'orders.apps.OrdersConfig',
     'products.apps.ProductsConfig',
     'rest_framework_simplejwt.token_blacklist',
+    'storages',
+
 ]
 
 MIDDLEWARE = [
@@ -203,3 +205,31 @@ SIMPLE_JWT = {
     'AUTH_TOKEN_CLASSES': ('rest_framework_simplejwt.tokens.AccessToken',),
 }
 
+
+import os
+from pathlib import Path
+from dotenv import load_dotenv
+
+# BASE_DIR = Path(__file__).resolve().parent.parent
+load_dotenv(BASE_DIR / ".env")
+
+STORAGES = {
+    "default": {
+        "BACKEND": "storages.backends.s3.S3Storage",
+        "OPTIONS": {
+            "access_key": os.getenv("AWS_ACCESS_KEY_ID"),
+            "secret_key": os.getenv("AWS_SECRET_ACCESS_KEY"),
+            "bucket_name": os.getenv("AWS_STORAGE_BUCKET_NAME"),
+            "endpoint_url": os.getenv("AWS_S3_ENDPOINT_URL"),
+            "region_name": os.getenv("AWS_S3_REGION_NAME"),
+            "addressing_style": "path",     # مخصوص آروان
+            "signature_version": "s3v4",    # الزامی برای آروان
+            "default_acl": None,            # فایل‌ها private بشن
+            "file_overwrite": False,        # تکراری بودن اسم رو overwrite نکن
+            },
+        },
+
+        "staticfiles": {
+        "BACKEND": "django.core.files.storage.FileSystemStorage",
+        },
+}
