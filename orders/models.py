@@ -2,8 +2,12 @@ from django.db import models
 
 from accounts.models import CustomUser
 from products.models import Product
-
-
+from accounts.models import CustomUser
+class Cart(models.Model):
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True) 
+    def __str__(self):
+        return f"{self.user.first_name}'s Cart"   
 class Order(models.Model):
     STATUS_CHOICES = [
         ('pending', 'pending'),
@@ -39,11 +43,13 @@ class Order(models.Model):
         return f'{self.user.first_name} at {self.time} ordered'
 
     
-class OrderItem(models.Model):
-    order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name='items')
+class CartItem(models.Model):
+    cart = models.ForeignKey(Cart, on_delete=models.CASCADE, related_name='items')
     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='order_item_product')
     quantity = models.PositiveIntegerField()
-
+    @property
+    def total_price(self):
+        return self.product.price * self.quantity
     def __str__(self):
         return f'Product: {self.product.title}, quantity: {self.quantity}'
 
@@ -56,7 +62,7 @@ class Comment(models.Model):
 
     @property
     def purchased_before(self):
-        return OrderItem.objects.filter(order__user=self.user, product=self.product).exists()
+        return CartItem.objects.filter(cart__user=self.user, product=self.product).exists()
 
     def __str__(self):
         return f'User: {self.user.first_name}, Product: {self.product.title}, Text: {self.text}'
@@ -84,3 +90,15 @@ class Notification(models.Model):
     
     def __str__(self):
         return f"Notification: {self.message[:50]}"
+    
+class OrderItem(models.Model):
+    order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name='items')
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='order_items')
+    quantity = models.PositiveIntegerField()
+
+    @property
+    def total_price(self):
+        return self.product.price * self.quantity
+
+    def __str__(self):
+        return f"{self.product.title} x {self.quantity}"
