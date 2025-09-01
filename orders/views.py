@@ -9,45 +9,88 @@ from django.views.generic.edit import CreateView
 
 from products.models import Product
 
-from .forms import CreateOrderItemForm
-from .models import Comment, Notification, Order, OrderItem, Rating
+from .forms import CreateCartItemForm
+from .models import Comment, Notification, Cart, OrderItem, Order, CartItem, Rating
 
 
-class CreateOrderView(LoginRequiredMixin, View):
-    def get(self, request, product_id):
-        product = get_object_or_404(Product, id=product_id)
-        if product.quantity <= 0:
-            messages.error(request,'This product is out of stock.')
-            return redirect('product-detail',pk=product.pk)
-        
-        form = CreateOrderItemForm()
-        return render(request, 'order/create_order.html', {'product': product, 'form': form})
-
+class AddToCartView(View):
     def post(self, request, product_id):
         product = get_object_or_404(Product, id=product_id)
         if product.quantity <= 0:
-            messages.error(request, "This product is out of stock.")
-            return redirect('product-detail', pk=product.pk)
+            messages.error(request, "Product is out of stock.")
+            return redirect('product-detail', pk=product.id)
 
-        form = CreateOrderItemForm(request.POST)
-        if form.is_valid():
-            quantity = form.cleaned_data['quantity']
-            if quantity > product.quantity:
-                messages.error(request, f"Only {product.quantity} items are available.")
-                return redirect('product-detail', pk=product.pk)
+        quantity = int(request.POST.get('quantity', 1))
 
-            order = Order.objects.create(user=request.user)
-            OrderItem.objects.create(order=order, product=product, quantity=quantity)
 
-            product.quantity -= quantity
-            product.save()
-            
-            Notification.objects.create(message=f'New order by {request.user.mobile} for {quantity} x {product.title}')
-            messages.success(request, f'{quantity} {product.title} is added to your order.')
+        cart, _ = Cart.objects.get_or_create(user=request.user)
 
-            return redirect('product-detail', pk=product.pk)
-        return render(request, 'product_detail.html', {'product': product, 'form': form})
+        cart_item, created = CartItem.objects.get_or_create(
+            cart=cart,
+            product=product,
+            defaults={'quantity': quantity}
+        )
 
+        if not created:
+            cart_item.quantity += quantity
+            cart_item.save()
+
+        messages.success(request, f"{product.title} x {quantity} added to cart.")
+        return redirect('cart_list')
+class CartListView(LoginRequiredMixin, ListView):
+    model = CartItem
+    context_object_name = 'cart_items'
+    template_name = 'order/cart_list.html'
+
+    def get_queryset(self):
+        return CartItem.objects.filter(user=self.request.user).select_related('product')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        cart_items = context['cart_items']
+        context['total_price'] = sum(item.total_price for item in cart_items)
+        return context
+
+
+@login_required
+def remove_from_cart_view(request, item_id):
+    item = get_object_or_404(CartItem, id=item_id, user=request.user)
+    item.delete()
+    messages.success(request, 'Item removed from your cart.')
+    return redirect('cart_list')
+
+@login_required
+def checkout_cart(request):
+    cart = get_object_or_404(Cart, user=request.user)
+    cart_items = cart.items.all()
+
+    if not cart_items:
+        messages.error(request, "Your cart is empty.")
+        return redirect('cart_list')
+
+    if request.method == 'POST':
+
+        order = Order.objects.create(user=request.user)
+        for item in cart_items:
+            if item.quantity > item.product.quantity:
+                messages.error(request, f"Not enough stock for {item.product.title}.")
+                return redirect('cart_list')
+
+            OrderItem.objects.create(
+                order=order,
+                product=item.product,
+                quantity=item.quantity
+            )
+
+            item.product.quantity -= item.quantity
+            item.product.save()
+
+        cart_items.delete()
+        messages.success(request, "Cart successfully paid and converted to order.")
+        return redirect('order_list')
+
+    total_price = sum(item.total_price for item in cart_items)
+    return render(request, 'order/checkout.html', {'cart_items': cart_items, 'total_price': total_price})
 
 class OrderListView(LoginRequiredMixin, ListView):
     model = Order
@@ -55,14 +98,8 @@ class OrderListView(LoginRequiredMixin, ListView):
     template_name = 'order/order_list.html'
 
     def get_queryset(self):
-        return Order.objects.filter(user=self.request.user, status='pending').prefetch_related('items__product__image_product')
+        return Order.objects.filter(user=self.request.user).prefetch_related('items__product')
     
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        orders = context['orders']
-        context['total_all_orders'] = sum(order.total_price for order in orders)
-        return context
-
 @login_required
 def cancel_order_view(request, order_id):
     order = get_object_or_404(Order, pk=order_id, user=request.user)
