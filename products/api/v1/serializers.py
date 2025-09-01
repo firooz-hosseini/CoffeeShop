@@ -54,15 +54,13 @@ class CommentSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = Comment
-        fields = ['id', 'product', 'text']
+        fields = ['id', 'text']
         read_only = ['id', 'is_approved']
 
     def validate(self, data):
         user = self.context['request'].user
-        product = data['product']
-
-        if not OrderItem.objects.filter(order__user=user, product=product).exists():
-            raise serializers.ValidationError('You can only leave comments for products you have purchased.')
+        if not user.is_authenticated:
+            raise serializers.ValidationError('To submit a comment, you must log in to your account.')
         return data
     
     def create(self, validated_data):
@@ -72,13 +70,13 @@ class CommentSerializer(serializers.ModelSerializer):
 
 class CommentListSerializer(serializers.ModelSerializer):
     user = serializers.StringRelatedField()
-    verified_purchase = serializers.SerializerMethodField()
+    purchased_before = serializers.SerializerMethodField()
 
     class Meta:
         model = Comment
-        fields = ['id', 'user', 'text', 'time', 'verified_purchase']
+        fields = ['id', 'user', 'text', 'time', 'purchased_before']
 
-    def get_verified_purchase(self, obj):
+    def get_purchased_before(self, obj):
         return OrderItem.objects.filter(order__user=obj.user, product=obj.product).exists()
 
 
