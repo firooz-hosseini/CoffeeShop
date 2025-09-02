@@ -10,7 +10,7 @@ from django.views.generic.edit import CreateView
 from products.models import Product
 
 from .forms import CreateOrderItemForm
-from .models import Comment, Notification, Order, OrderItem, Rating
+from .models import Comment, Notification, Order, OrderItem, Rating, FinalOrder
 
 
 class CreateOrderView(LoginRequiredMixin, View):
@@ -38,9 +38,6 @@ class CreateOrderView(LoginRequiredMixin, View):
 
             order = Order.objects.create(user=request.user)
             OrderItem.objects.create(order=order, product=product, quantity=quantity)
-
-            product.quantity -= quantity
-            product.save()
             
             Notification.objects.create(message=f'New order by {request.user.mobile} for {quantity} x {product.title}')
             messages.success(request, f'{quantity} {product.title} is added to your order.')
@@ -117,19 +114,36 @@ class CommentCreateView(LoginRequiredMixin, CreateView):
 
 @login_required
 def pay_order_views(request):
-    orders = Order.objects.filter(user=request.user, status='pending')
+    orders = Order.objects.filter(user=request.user, status='pending').prefetch_related('items__product')
 
     if not orders.exists():
         messages.error(request, 'There is no order to pay!')
         return redirect('order_list')
       
     if request.method == 'POST':
-        for order in orders:
-            try:
+        try:
+            for order in orders:
+                for item in order.items.all():
+                    product = item.product
+                    if item.quantity > product.quantity:
+                        messages.error(request, f"Not enough stock for {product.title}.")
+                        return redirect('order_list')
+                    product.quantity -= item.quantity
+                    product.save()
+
                 mark_as_paid(order)
-            except ValueError as e:
-                messages.error(request, str(e))
-                return redirect('order_list')
+
+            
+            final_order = FinalOrder.objects.create(user=request.user, status='paid')
+            final_order.orders.set(orders) 
+
+            Notification.objects.create(
+            message=f'New order by {request.user.first_name}, Order ID: {final_order.id}'
+            )
+
+        except ValueError as e:
+            messages.error(request, str(e))
+            return redirect('order_list')
 
         messages.success(request, 'The payment was successfully made!')
         return redirect('order_list')
@@ -168,3 +182,16 @@ class RateProductView(LoginRequiredMixin, View):
             messages.success(request, f"Your rating for {product.title} has been updated to {score} stars.")
 
         return redirect('product-detail', pk=product.pk)
+
+
+
+class FinalOrderListView(LoginRequiredMixin, ListView):
+    model = FinalOrder
+    context_object_name = 'final_orders'
+    template_name = 'order/final_order_list.html'
+
+    def get_queryset(self):
+        return FinalOrder.objects.filter(user=self.request.user)\
+                                 .prefetch_related(
+                                     'orders__items__product__image_product'
+                                 )

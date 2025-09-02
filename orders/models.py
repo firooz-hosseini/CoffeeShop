@@ -84,3 +84,22 @@ class Notification(models.Model):
     
     def __str__(self):
         return f"Notification: {self.message[:50]}"
+    
+
+
+class FinalOrder(models.Model):
+    STATUS_CHOICES = [
+        ('paid', 'Paid'),
+        ('delivered', 'Delivered'),
+        ('canceled', 'Canceled'),
+    ]
+    orders = models.ManyToManyField(Order, related_name='final_orders')  # اینجا همه اوردرهای سبد
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='final_orders')
+    created_at = models.DateTimeField(auto_now_add=True)
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='paid')
+
+    def total_price(self):
+        return sum(order.total_price for order in self.orders.all())
+    
+    def __str__(self):
+        return f"Order by {self.user.mobile} at {self.created_at}"

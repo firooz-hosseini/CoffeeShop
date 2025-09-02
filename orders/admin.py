@@ -1,6 +1,6 @@
 from django.contrib import admin, messages
 
-from .models import Comment, Notification, Order, OrderItem, Rating
+from .models import Comment, Notification, Order, OrderItem, Rating, FinalOrder
 
 
 class OrderItemInline(admin.TabularInline):
@@ -69,3 +69,5 @@ class NotificationAdmin(admin.ModelAdmin):
     search_fields = ('message',)
     ordering = ('-created_at',)
     actions = [mark_as_read]
+
+admin.site.register(FinalOrder)
