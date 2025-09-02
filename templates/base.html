@@ -1,0 +1,65 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-amber-100 text-gray-800 min-h-screen flex flex-col">
+
+<div id="header" class="bg-yellow-50 rounded-lg shadow-lg p-6 mb-10 border border-stone-300">
+    <div class="text-center">
+        <h1 class="text-4xl font-extrabold text-amber-800 mb-6">
+            Welcome to My Coffee Shop 
+        </h1>
+        <div class="flex flex-wrap justify-center gap-4">
+            {% if user.is_authenticated %}
+                <a href="{% url 'order_list' %}" class="bg-purple-500 hover:bg-purple-600 text-white px-4 py-1 rounded">Shopping Cart</a>
+                <a href="{% url 'profile' %}" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-1 rounded">My Profile</a>
+                <form action="{% url 'logout' %}" method="post" class="inline">
+                    {% csrf_token %}
+                    <button type="submit" class="bg-red-500 hover:bg-red-600 text-white px-4 py-1 rounded">Logout</button>
+                </form>
+                <a href="{% url 'home' %}" class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-1 rounded">Home</a>
+
+            {% else %}
+                <a href="{% url 'login' %}" class="bg-green-500 hover:bg-green-600 text-white px-4 py-1 rounded">Login</a>
+                <a href="{% url 'signup' %}" class="bg-green-500 hover:bg-green-600 text-white px-4 py-1 rounded">Signup</a>
+                <a href="{% url 'home' %}" class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-1 rounded">Home</a>
+            {% endif %}
+        </div>  
+    </div>
+</div>
+ <main class="flex-grow">
+<div class="max-w-6xl mx-auto px-4 py-10 flex flex-col items-center">
+    {% block content %}
+    {% endblock %}
+</div>
+    </main>
+
+
+ <footer class="mt-16 bg-amber-800 text-amber-100 py-8 relative">
+        <div class="max-w-6xl mx-auto px-4 text-sm grid grid-cols-1 sm:grid-cols-3 gap-6">
+            <div>
+                <h4 class="font-bold mb-2">Contact Us</h4>
+                <p>Phone: 09121234567</p>
+                <p>Email: <a href="mailto:coffeeshop@gmail.com" class="underline">coffeeshop@gmail.com</a></p>
+            </div>
+            <div>
+                <h4 class="font-bold mb-2">Address</h4>
+                <p>Tehran, ValiAsr St</p>
+            </div>
+            <div>
+                <h4 class="font-bold mb-2">Follow Us</h4>
+                <p><a href="#" class="underline">Instagram</a></p>
+                <p><a href="#" class="underline">Telegram</a></p>
+            </div>
+        </div>
+        <div class="text-center mt-6 text-xs text-amber-200">
+            2025 My Coffee Shop. All rights reserved.
+        </div>
+    </footer>
+
+</body>
+</html>
