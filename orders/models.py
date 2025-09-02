@@ -93,23 +93,13 @@ class FinalOrder(models.Model):
         ('delivered', 'Delivered'),
         ('canceled', 'Canceled'),
     ]
-
+    orders = models.ManyToManyField(Order, related_name='final_orders')  # اینجا همه اوردرهای سبد
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='final_orders')
     created_at = models.DateTimeField(auto_now_add=True)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='paid')
 
-    @property
     def total_price(self):
-        return sum(item.product.price * item.quantity for item in self.items.all())
-
+        return sum(order.total_price for order in self.orders.all())
+    
     def __str__(self):
-        return f"FinalOrder {self.id} - {self.user.mobile}"
-
-
-class FinalOrderItem(models.Model):
-    final_order = models.ForeignKey(FinalOrder, on_delete=models.CASCADE, related_name="items")
-    product = models.ForeignKey(Product, on_delete=models.CASCADE)
-    quantity = models.PositiveIntegerField()
-
-    def __str__(self):
-        return f"{self.product.title} x {self.quantity}"
+        return f"Order by {self.user.mobile} at {self.created_at}"
