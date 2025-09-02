@@ -1,11 +1,5 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>{{ product.title }}</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-</head>
+{% extends "base.html" %}
+{% block content %}
 
 <body class="bg-amber-100 text-gray-800 min-h-screen flex items-start justify-center py-12 px-4 sm:px-6 lg:px-8">
   
@@ -183,3 +177,4 @@
 
 </body>
 </html>
+{% endblock %}
