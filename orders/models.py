@@ -93,7 +93,7 @@ class FinalOrder(models.Model):
         ('delivered', 'Delivered'),
         ('canceled', 'Canceled'),
     ]
-    orders = models.ManyToManyField(Order, related_name='final_orders')  # اینجا همه اوردرهای سبد
+    orders = models.ManyToManyField(Order, related_name='final_orders') 
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='final_orders')
     created_at = models.DateTimeField(auto_now_add=True)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='paid')
