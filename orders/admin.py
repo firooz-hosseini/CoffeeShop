@@ -70,4 +70,24 @@ class NotificationAdmin(admin.ModelAdmin):
     ordering = ('-created_at',)
     actions = [mark_as_read]
 
-admin.site.register(FinalOrder)
+@admin.register(FinalOrder)
+class FinalOrderAdmin(admin.ModelAdmin):
+    list_display = ['user', 'created_at', 'status', 'seen_by_admin']
+    list_filter = ['created_at', 'orders', 'status', 'seen_by_admin']
+    search_fields = ['user__first_name', 'user__last_name', 'user__username']
+    list_editable = ['status']
+    
+
+    def changelist_view(self, request, extra_context=None):
+        new_orders = FinalOrder.objects.filter(seen_by_admin=False)
+        count = new_orders.count()
+
+        if count > 0:
+            messages.warning(request, f"🔔{count} new order registered")
+        return super().changelist_view(request, extra_context=extra_context)
+    
+    
+    def save_model(self, request, obj, form, change):
+        obj.seen_by_admin = True
+        super().save_model(request, obj, form, change)
+    

@@ -97,6 +97,7 @@ class FinalOrder(models.Model):
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='final_orders')
     created_at = models.DateTimeField(auto_now_add=True)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='paid')
+    seen_by_admin = models.BooleanField(default=False)
 
     @property
     def total_price(self):
