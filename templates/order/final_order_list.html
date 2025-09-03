@@ -42,7 +42,7 @@
             <p class="text-sm text-gray-600 mb-4">Ordered by: {{ f_order.user.first_name }}</p>
 
             {% for order in f_order.orders.all %}
-              <p class="text-sm text-amber-800 font-medium mt-2 mb-2">Order ID: {{ order.id }} | Date: {{ order.time|date:"Y-m-d H:i" }}</p>
+              <p class="text-sm text-amber-800 font-medium mt-2 mb-2">Cart ID: {{ order.id }} | Date: {{ order.time|date:"Y-m-d H:i" }}</p>
               <ul class="space-y-4 mb-4">
                 {% for item in order.items.all %}
                   <li class="flex flex-col sm:flex-row items-center gap-4 bg-yellow-50 p-4 rounded border border-yellow-100">
