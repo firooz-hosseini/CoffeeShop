@@ -11,7 +11,7 @@
 <div id="header" class="sticky top-0 bg-yellow-50 rounded-lg shadow-lg p-6 border border-stone-300 z-50">
     <div class="text-center">
         <h1 class="text-4xl font-extrabold text-amber-800 mb-6">
-            Welcome to My Coffee Shop 
+            Welcome to Coffee Shop 4
         </h1>
         <div class="flex flex-wrap justify-center gap-4">
             {% if user.is_authenticated %}
@@ -25,7 +25,7 @@
                 <a href="{% url 'home' %}" class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-1 rounded">Home</a>
             {% else %}
                 <a href="{% url 'login' %}" class="bg-green-500 hover:bg-green-600 text-white px-4 py-1 rounded">Login</a>
-                <a href="{% url 'signup' %}" class="bg-green-500 hover:bg-green-600 text-white px-4 py-1 rounded">Signup</a>
+                <a href="{% url 'signup' %}" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-1 rounded">Signup</a>
                 <a href="{% url 'home' %}" class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-1 rounded">Home</a>
             {% endif %}
         </div>  
