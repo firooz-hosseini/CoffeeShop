@@ -98,6 +98,7 @@ class FinalOrder(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='paid')
 
+    @property
     def total_price(self):
         return sum(order.total_price for order in self.orders.all())
     

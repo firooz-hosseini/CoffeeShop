@@ -11,7 +11,7 @@ from django.urls import reverse_lazy
 from django.views.generic import TemplateView, UpdateView
 from django.views.generic.edit import CreateView
 
-from orders.models import Comment, Order, OrderItem, Rating
+from orders.models import Comment, Order, OrderItem, Rating, FinalOrder
 from products.models import Favorite
 
 from .forms import CustomUserCreationForm, ProfileUpdateForm
@@ -41,6 +41,9 @@ class ProfileView(LoginRequiredMixin, TemplateView):
         context['favorites'] = Favorite.objects.filter(user=user)
         context['comments'] = Comment.objects.filter(user=user)
         context['ratings'] = Rating.objects.filter(user=user)
+        context['final_orders'] = FinalOrder.objects.filter(user=user).prefetch_related(
+            'orders__items__product__image_product'
+        )
 
         return context
     
