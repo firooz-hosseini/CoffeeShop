@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% block content %}
 <body class="bg-amber-100 py-10 px-4 text-gray-800">
-<div class="max-w-5xl mx-auto bg-white rounded-xl shadow-lg p-8 space-y-10">
+<div class="max-w-6xl mx-auto bg-white rounded-xl shadow-lg p-8 space-y-10">
 
   <div class="text-center">
     {% if user.profile_picture %}
@@ -16,101 +16,98 @@
 
   <div class="grid md:grid-cols-2 gap-8">
 
-    <!-- Final Orders -->
+
     <div>
-      <h2 class="text-xl font-semibold mb-2 border-b pb-1">My Final Orders</h2>
+      <h2 class="text-xl font-semibold mb-2 border-b pb-1">My Orders</h2>
+      <div class="max-h-96 overflow-y-auto space-y-4">
+        {% for f_order in final_orders %}
+          <div class="bg-white rounded-lg border border-gray-200 p-4">
+            <h3 class="font-semibold text-gray-800 mb-1">
+              Order ID: {{ f_order.id }}
+              <span class="text-gray-500 text-sm">| Date: {{ f_order.created_at|date:"Y-m-d H:i" }}</span>
+              <span class="ml-2 text-sm font-medium
+                {% if f_order.status == 'paid' %}text-blue-600
+                {% elif f_order.status == 'delivered' %}text-green-600
+                {% elif f_order.status == 'canceled' %}text-red-600
+                {% else %}text-gray-500{% endif %}">
+                Status: {{ f_order.get_status_display }}
+              </span>
+            </h3>
 
-      {% for f_order in final_orders %}
-        <div class="bg-yellow-50 rounded-lg border border-amber-200 shadow p-4 mb-4">
-          <h3 class="font-semibold text-amber-900">
-            Final Order ID: {{ f_order.id }}
-            <span class="block sm:inline text-gray-500 text-sm">| Date: {{ f_order.time|date:"Y-m-d H:i" }}</span>
-            <span class="block sm:inline sm:ml-4 text-sm font-medium
-              {% if f_order.status == 'paid' %}text-blue-600
-              {% elif f_order.status == 'delivered' %}text-green-600
-              {% elif f_order.status == 'canceled' %}text-red-600
-              {% else %}text-gray-500{% endif %}">
-              Status: {{ f_order.get_status_display }}
-            </span>
-          </h3>
-
-          <ul class="space-y-2 mt-2 pl-4 list-disc">
-            {% for order in f_order.orders.all %}
-              {% for item in order.items.all %}
-                <li>
-                  {{ item.quantity }} × {{ item.product.title }}
-                  <span class="ml-2 text-sm {% if order.status == 'pending' %}text-yellow-600
-                                              {% elif order.status == 'delivered' %}text-green-600
-                                              {% elif order.status == 'canceled' %}text-red-600
-                                              {% else %}text-gray-500{% endif %}">
-                    ({{ order.get_status_display }})
-                  </span>
-                </li>
+            <ul class="pl-4 list-disc space-y-1 max-h-40 overflow-y-auto">
+              {% for order in f_order.orders.all %}
+                {% for item in order.items.all %}
+                  <li>{{ item.quantity }} × {{ item.product.title }} (Order ID: {{ order.id }})</li>
+                {% endfor %}
               {% endfor %}
-            {% endfor %}
-          </ul>
+            </ul>
 
-          <p class="mt-2 font-semibold text-gray-800 text-right">
-            Total: <span class="text-green-700">{{ f_order.total_price }},000 Toman</span>
-          </p>
-        </div>
-      {% empty %}
-        <p class="text-gray-500">You have no final orders.</p>
-      {% endfor %}
+            <p class="mt-2 font-semibold text-gray-800 text-right">
+              Total: <span class="text-green-700">{{ f_order.total_price }},000 Toman</span>
+            </p>
+          </div>
+        {% empty %}
+          <p class="text-gray-500">You have no orders.</p>
+        {% endfor %}
+      </div>
     </div>
 
-    <!-- Favorites -->
+ 
     <div>
       <h2 class="text-xl font-semibold mb-2 border-b pb-1">Favorites</h2>
-      <ul class="space-y-2">
-        {% for fav in favorites %}
-          <li class="flex flex-col sm:flex-row sm:justify-between sm:items-center border-b pb-2">
-            <span>{{ fav.product.title }}</span>
-            <a href="{% url 'create_order' fav.product.pk %}"
-               class="mt-2 sm:mt-0 bg-yellow-400 hover:bg-yellow-500 text-sm text-black px-3 py-1 rounded">
-               Order Again
-            </a>
-          </li>
-        {% empty %}
-          <li class="text-gray-500">No favorite products.</li>
-        {% endfor %}
-      </ul>
+      <div class="max-h-96 overflow-y-auto">
+        <ul class="space-y-2">
+          {% for fav in favorites %}
+            <li class="flex justify-between border-b pb-2">
+              <span>{{ fav.product.title }}</span>
+              <a href="{% url 'create_order' fav.product.pk %}"
+                 class="bg-yellow-400 hover:bg-yellow-500 text-sm text-black px-3 py-1 rounded">Order Again</a>
+            </li>
+          {% empty %}
+            <li class="text-gray-500">No favorite products.</li>
+          {% endfor %}
+        </ul>
+      </div>
     </div>
 
   </div>
 
-  <!-- Ratings & Comments can remain same -->
+
   <div class="grid md:grid-cols-2 gap-8">
 
     <div>
       <h2 class="text-xl font-semibold mb-2 border-b pb-1">Ratings</h2>
-      <ul class="space-y-1 pl-4 list-disc">
-        {% for rating in ratings %}
-          <li>{{ rating.product.title }} – Score: {{ rating.score }}</li>
-        {% empty %}
-          <li class="text-gray-500">No ratings yet.</li>
-        {% endfor %}
-      </ul>
+      <div class="max-h-80 overflow-y-auto pl-4 list-disc">
+        <ul class="space-y-1">
+          {% for rating in ratings %}
+            <li>{{ rating.product.title }} – Score: {{ rating.score }}</li>
+          {% empty %}
+            <li class="text-gray-500">No ratings yet.</li>
+          {% endfor %}
+        </ul>
+      </div>
     </div>
 
     <div>
       <h2 class="text-xl font-semibold mb-2 border-b pb-1">Comments</h2>
-      <ul class="space-y-1 pl-4 list-disc">
-        {% for comment in comments %}
-          <li>{{ comment.product.title }} - "{{ comment.text }}"
-            <span class="ml-2 text-sm {% if comment.is_approved %}text-green-600 {% else %}text-yellow-600{% endif %}">
-              ({{ comment.is_approved|yesno:"approved,pending" }})
-            </span>
-          </li>
-        {% empty %}
-          <li class="text-gray-500">No comments yet.</li>
-        {% endfor %}
-      </ul>
+      <div class="max-h-80 overflow-y-auto pl-4 list-disc">
+        <ul class="space-y-1">
+          {% for comment in comments %}
+            <li>{{ comment.product.title }} - "{{ comment.text }}"
+              <span class="ml-2 text-sm {% if comment.is_approved %}text-green-600 {% else %}text-yellow-600{% endif %}">
+                ({{ comment.is_approved|yesno:"approved,pending" }})
+              </span>
+            </li>
+          {% empty %}
+            <li class="text-gray-500">No comments yet.</li>
+          {% endfor %}
+        </ul>
+      </div>
     </div>
 
   </div>
 
-  <!-- Action Buttons -->
+
   <div class="flex flex-col sm:flex-row sm:flex-wrap justify-center gap-4 pt-6 border-t">
     <a href="{% url 'edit-profile' %}" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded text-center w-full sm:w-auto"> Edit Profile </a>
     <a href="{% url 'change_password' %}" class="bg-purple-500 hover:bg-purple-600 text-white px-4 py-2 rounded text-center w-full sm:w-auto"> Change Password </a>

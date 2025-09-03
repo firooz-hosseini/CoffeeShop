@@ -18,7 +18,6 @@
     {% endif %}
 
     {% if orders %}
-      <!-- گرید رسپانسیو: موبایل 1 ستون، تبلت 2 ستون، دسکتاپ 3 ستون -->
       <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
         {% for order in orders %}
           <div class="bg-white shadow-md border border-amber-200 rounded-xl p-4 flex flex-col h-auto w-full">
@@ -77,7 +76,6 @@
         {% endfor %}
       </div>
 
-      <!-- دکمه Pay داخل باکس، سمت راست -->
       {% if total_all_orders > 0 %}
         <div class="mt-10 flex justify-center">
           <div class="bg-white shadow-md border border-gray-200 rounded-xl px-6 py-4 flex items-center justify-between w-full max-w-md">
