@@ -1,13 +1,13 @@
 {% extends "base.html" %}
 {% block content %}
-<body class="bg-amber-100 text-gray-800">
-  <div class="max-w-5xl mx-auto px-4 sm:px-6 py-12">
+<div class="bg-amber-100 min-h-screen pb-32">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 py-8">
     <h1 class="text-3xl font-bold text-amber-800 mb-6 text-center">Shopping Cart</h1>
 
     {% if messages %}
-      <ul class="mb-6">
+      <ul class="mb-6 space-y-2">
         {% for message in messages %}
-          <li class="text-center text-white py-2 px-4 rounded 
+          <li class="text-center text-white py-2 px-4 rounded shadow
               {% if message.tags == 'success' %}bg-green-500
               {% elif message.tags == 'error' %}bg-red-500
               {% else %}bg-blue-500{% endif %}">
@@ -18,77 +18,77 @@
     {% endif %}
 
     {% if orders %}
-      <div class="space-y-8">
+      <!-- گرید رسپانسیو: موبایل 1 ستون، تبلت 2 ستون، دسکتاپ 3 ستون -->
+      <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
         {% for order in orders %}
-          <div class="bg-white shadow-md border border-amber-200 rounded-lg p-6">
-            <h3 class="text-lg sm:text-xl font-semibold text-amber-700 mb-2">
+          <div class="bg-white shadow-md border border-amber-200 rounded-xl p-4 flex flex-col h-auto w-full">
+            <h3 class="text-base sm:text-lg font-semibold text-amber-700 mb-1">
               Cart ID: {{ order.id }}
-              <span class="block sm:inline text-gray-500 text-sm">| Date: {{ order.time|date:"Y-m-d H:i" }}</span>
-              <span class="block sm:inline sm:ml-4 text-sm font-medium
-                {% if order.status == 'pending' %}text-yellow-600
-                {% elif order.status == 'paid' %}text-blue-600
-                {% elif order.status == 'delivered' %}text-green-600
-                {% elif order.status == 'canceled' %}text-red-600
-                {% else %}text-gray-500{% endif %}">
-                Status: {{ order.get_status_display }}
-              </span>
             </h3>
+            <p class="text-xs text-gray-500 mb-2">
+              {{ order.time|date:"Y-m-d H:i" }} |
+              <span class="{% if order.status == 'pending' %}text-yellow-600
+                            {% elif order.status == 'paid' %}text-blue-600
+                            {% elif order.status == 'delivered' %}text-green-600
+                            {% elif order.status == 'canceled' %}text-red-600
+                            {% else %}text-gray-500{% endif %}">
+                {{ order.get_status_display }}
+              </span>
+            </p>
 
-            <p class="text-sm text-gray-600 mb-4">Ordered by: {{ order.user.first_name }}</p>
-
-            <ul class="space-y-4">
+            <ul class="space-y-2">
               {% for item in order.items.all %}
-                <li class="flex flex-col sm:flex-row items-center gap-4 bg-yellow-50 p-4 rounded border border-yellow-100">
-                  <div class="w-full sm:w-24 h-24 flex-shrink-0">
+                <li class="flex items-center gap-3 bg-yellow-50 p-2 rounded-lg border border-yellow-100">
+                  <div class="w-16 h-16 flex-shrink-0">
                     {% with item.product.image_product.all|first as image %}
                       {% if image %}
                         <img src="{{ image.image.url }}" alt="{{ item.product.title }}"
                              class="w-full h-full object-cover rounded border">
                       {% else %}
-                        <div class="w-full h-full flex items-center justify-center bg-gray-100 text-gray-400 text-sm border rounded">
+                        <div class="w-full h-full flex items-center justify-center bg-gray-100 text-gray-400 text-xs border rounded">
                           No Image
                         </div>
                       {% endif %}
                     {% endwith %}
                   </div>
-                  <div class="text-center sm:text-left">
-                    <p class="font-semibold text-amber-900">{{ item.product.title }}</p>
-                    <p class="text-sm text-gray-600">Quantity: {{ item.quantity }}</p>
-                    <p class="text-sm text-green-700">Unit Price: {{ item.product.price }},000 Toman</p>
+                  <div class="flex-1">
+                    <p class="text-sm font-semibold text-amber-900 truncate">{{ item.product.title }}</p>
+                    <p class="text-xs text-gray-600">Qty: {{ item.quantity }}</p>
+                    <p class="text-xs text-green-700">{{ item.product.price }},000 Toman</p>
                   </div>
                 </li>
               {% endfor %}
             </ul>
 
-            <p class="mt-4 font-semibold text-gray-800 text-right">
-              Total Price: <span class="text-green-700">{{ order.total_price }},000 Toman</span>
+            <p class="mt-3 font-semibold text-right text-sm border-t pt-2">
+              Total: <span class="text-green-700">{{ order.total_price }},000 Toman</span>
             </p>
 
             {% if order.status == 'pending' and user == order.user %}
-              <div class="mt-6 flex gap-4">
-                <form method="post" action="{% url 'cancel_order' order.id %}">
-                  {% csrf_token %}
-                  <button type="submit"
-                          class="w-full sm:w-auto bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600">
-                    Cancel Cart
-                  </button>
-                </form>
-              </div>
+              <form method="post" action="{% url 'cancel_order' order.id %}" class="mt-2">
+                {% csrf_token %}
+                <button type="submit"
+                        class="w-full bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600">
+                  Cancel Cart
+                </button>
+              </form>
             {% endif %}
           </div>
         {% endfor %}
       </div>
 
-      <p class="mt-10 text-lg font-bold text-right text-amber-800">
-        Total Of All Orders: <span class="text-green-700">{{ total_all_orders }},000 Toman</span>
-      </p>
-
+      <!-- دکمه Pay داخل باکس، سمت راست -->
       {% if total_all_orders > 0 %}
-        <div class="mt-6 text-right">
-          <a href="{% url 'order_pay'%}"
-             class="inline-block bg-green-600 hover:bg-green-700 text-white font-medium px-6 py-2 rounded">
-            Pay
-          </a>
+        <div class="mt-10 flex justify-center">
+          <div class="bg-white shadow-md border border-gray-200 rounded-xl px-6 py-4 flex items-center justify-between w-full max-w-md">
+            <p class="font-semibold text-gray-700">
+              Total: <span class="text-green-700">{{ total_all_orders }},000 Toman</span>
+            </p>
+            <a href="{% url 'order_pay'%}"
+               class="bg-green-600 hover:bg-green-700 text-white font-medium px-6 py-2 rounded-lg shadow">
+              Pay
+            </a>
+          </div>
         </div>
       {% endif %}
     {% else %}
@@ -102,6 +102,5 @@
       </a>
     </div>
   </div>
-</body>
-</html>
+</div>
 {% endblock %}

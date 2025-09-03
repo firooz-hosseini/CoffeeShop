@@ -12,6 +12,8 @@ from products.models import Product
 from .forms import CreateOrderItemForm
 from .models import Comment, Notification, Order, OrderItem, Rating, FinalOrder
 
+from django.db import transaction
+
 
 class CreateOrderView(LoginRequiredMixin, View):
     def get(self, request, product_id):
@@ -122,24 +124,25 @@ def pay_order_views(request):
       
     if request.method == 'POST':
         try:
-            for order in orders:
-                for item in order.items.all():
-                    product = item.product
-                    if item.quantity > product.quantity:
-                        messages.error(request, f"Not enough stock for {product.title}.")
-                        return redirect('order_list')
-                    product.quantity -= item.quantity
-                    product.save()
+            with transaction.atomic():
+                for order in orders:
+                    for item in order.items.all():
+                        product = item.product
+                        if item.quantity > product.quantity:
+                            messages.error(request, f"Not enough stock for {product.title}.")
+                            raise ValueError(f"Not enough stock for {product.title}.")
+                        product.quantity -= item.quantity
+                        product.save()
 
-                mark_as_paid(order)
+                    mark_as_paid(order)
 
-            
-            final_order = FinalOrder.objects.create(user=request.user, status='paid')
-            final_order.orders.set(orders) 
+                
+                final_order = FinalOrder.objects.create(user=request.user, status='paid')
+                final_order.orders.set(orders) 
 
-            Notification.objects.create(
-            message=f'New order by {request.user.first_name}, Order ID: {final_order.id}'
-            )
+                Notification.objects.create(
+                message=f'New order by {request.user.first_name}, Order ID: {final_order.id}'
+                )
 
         except ValueError as e:
             messages.error(request, str(e))
