@@ -136,7 +136,7 @@ ERD diagrams included (`ERD.pdf`, `CoffeeShop ERD.drawio.pdf`) showing tables, r
 
 ---
 
-## 👥 Team & Roles
+## Team & Roles
 
 This project was developed by a team of three members as part of **Maktab130**.
 
